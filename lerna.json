@@ -6,6 +6,9 @@
     "publish": {
       "conventionalCommits": true,
       "message": "chore(release): publish :tada:"
+    },
+    "version": {
+      "allowBranch": "master"
     }
   }
 }
