@@ -47,6 +47,7 @@ export const buildAtomicStateInterpolator = <State extends object>(
         newState[key] = !atEnd ? from! : to;
         continue;
       }
+      // @ts-ignore
       newState[key] = interpFn<State[typeof key]>(from!, to)(eased);
     }
     return { progress: eased, state: newState };

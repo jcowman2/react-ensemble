@@ -22,9 +22,9 @@ module.exports = {
   ignorePatterns: [
     "*.config.js",
     "node_modules/",
-    "scripts/",
-    "dist/",
-    "**/*.test.ts"
+    ".cache/",
+    ".docz/",
+    "public"
   ],
   rules: {
     "@typescript-eslint/interface-name-prefix": 0, // Disable "I" prefix for interfaces enforcement

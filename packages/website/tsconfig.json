@@ -2,17 +2,16 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "jsx": "react",
-    "declarationDir": "./dist/types",
-
+    "allowJs": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "declaration": true,
-
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "allowUnreachableCode": false
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react"
   },
-  "include": ["src/**/*"]
+  "include": ["src"]
 }
