@@ -19,7 +19,7 @@ module.exports = {
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
-  ignorePatterns: ["*.config.js", "node_modules/", "scripts/"],
+  ignorePatterns: ["*.config.js", "node_modules/", "scripts/", "dist/"],
   rules: {
     "@typescript-eslint/interface-name-prefix": 0, // Disable "I" prefix for interfaces enforcement
     "@typescript-eslint/ban-ts-ignore": 0,

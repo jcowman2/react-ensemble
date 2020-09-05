@@ -1,10 +1,16 @@
 {
   "name": "react-intime",
-  "private": true,
   "version": "0.1.0",
   "description": "Intuitive and precise control over complex animation timing for React",
   "author": "Joseph Cowman",
   "license": "MIT",
+  "repository": "github:jcowman2/react-intime",
+  "homepage": "https://github.com/jcowman2/react-intime",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build:src": "webpack --mode production",
     "build:types": "tsc --emitDeclarationOnly",
