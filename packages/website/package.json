@@ -2,7 +2,7 @@
   "name": "react-intime-website",
   "description": "Website for React Intime",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "author": "Joseph Cowman",
   "repository": "github:jcowman2/react-intime",
@@ -16,6 +16,6 @@
     "gatsby-theme-docz": "^2.3.1-alpha.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-intime": "^0.1.0"
+    "react-intime": "^0.2.0"
   }
 }
