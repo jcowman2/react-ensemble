@@ -25,7 +25,13 @@ export interface ITimelineProps<State extends object = {}> {
   value: number;
   playing: boolean;
 
-  /** @default 1 */
+  /**
+   * The timeline's playback speed multiplier. `1` (default) will play the animation at regular speed,
+   * `2` will play at double speed, `0.5` will play at half speed, etc.
+   *
+   * Supply a negative number to play in reverse. For example, `-2` would play backwards at double speed.
+   * @default 1
+   */
   playbackSpeed?: number;
   /** @default 10 */
   interval?: number;
@@ -35,13 +41,9 @@ export interface ITimelineProps<State extends object = {}> {
   easing?: EasingFunction;
   interp?: InterpolationFunction;
 
-  /** @default () => {} */
   onTick?: (event: ITickEvent) => void;
-  /** @default () => {} */
   onUpdate?: (event: IUpdateEvent<State>) => void;
-  /** @default () => {} */
   onEnded?: () => void;
-  /** @default () => {} */
   onLoad?: (event: ILoadEvent<State>) => void;
 }
 

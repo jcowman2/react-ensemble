@@ -11,6 +11,7 @@ module.exports = {
   menu: [],
   themeConfig: {
     initialColorMode: "light",
-    showDarkModeSwitch: false
+    showDarkModeSwitch: false,
+    showPlaygroundEditor: false
   }
 };

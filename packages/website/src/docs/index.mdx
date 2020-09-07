@@ -1,0 +1,78 @@
+---
+name: Introduction
+route: /docs
+---
+
+import { Playground, Props } from "docz";
+import { TrackUtils, Controller, Timeline } from "react-intime";
+
+# Docs Landing Page
+
+Hello world!
+
+<Playground>
+  {() => {
+    const [tick, setTick] = React.useState(0);
+    const defaultSquareState = {
+      x: 0,
+      y: 10,
+      width: 20,
+      angle: 0,
+      color: "green"
+    };
+    const [squareState, setSquareState] = React.useState(defaultSquareState);
+    const { x, y, width, angle, color } = squareState;
+    return (
+      <>
+        <Timeline
+          value={tick}
+          playing
+          endBehavior="loop"
+          defaultState={defaultSquareState}
+          track={[
+            {
+              start: 1000,
+              duration: 2000,
+              state: {
+                x: { to: 200 },
+                color: { set: "red" }
+              }
+            },
+            {
+              duration: 2000,
+              state: {
+                y: { to: 200 },
+                width: { to: 50 },
+                color: { set: "blue" }
+              }
+            },
+            {
+              duration: 1000,
+              state: {
+                x: { to: 500 },
+                y: { to: 20 },
+                width: { to: 10 },
+                angle: { to: 360 }
+              }
+            }
+          ]}
+          onTick={({ value }) => setTick(value)}
+          onUpdate={({ state }) => setSquareState(state)}
+        />
+        <div style={{ height: 250 }}>
+          <div
+            style={{
+              position: "relative",
+              left: x,
+              top: y,
+              width: width,
+              height: width,
+              transform: `rotate(${angle}deg)`,
+              backgroundColor: color
+            }}
+          />
+        </div>
+      </>
+    );
+  }}
+</Playground>
