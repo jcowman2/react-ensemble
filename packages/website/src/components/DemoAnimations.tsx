@@ -9,7 +9,7 @@ interface DemoAnimationState {
   angle: number;
 }
 
-const DemoAnimation: React.FC = () => {
+export const DemoAnimation: React.FC = () => {
   const defaultSpriteState = {
     borderRadius: 0,
     width: 60,
@@ -94,7 +94,7 @@ const DemoAnimation: React.FC = () => {
   );
 };
 
-const DemoAnimation2: React.FC = () => {
+export const DemoAnimation2: React.FC = () => {
   const [tick, setTick] = React.useState(0);
   const defaultSquareState = {
     x: 0,
