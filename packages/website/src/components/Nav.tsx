@@ -44,15 +44,20 @@ const StyledNavLink: React.FC<{
 const Nav: React.FC = props => {
   return (
     <Container>
-      <Flex>
-        <div>
+      <Flex sx={{ flexDirection: ["column", "row", "row"] }}>
+        <Container>
           <Heading as="h1">
             <StyledNavLink label="React Ensemble" linkTo="/" />
           </Heading>
-        </div>
+        </Container>
         <Flex
           as="nav"
-          sx={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
+          sx={{
+            flex: 1,
+            justifyContent: ["flex-start", "flex-end", "flex-end"],
+            alignItems: "center",
+            mt: [2, 0]
+          }}
         >
           <div sx={{ mr: 4 }}>
             <StyledNavLink label="Docs" linkTo="/docs/" />
