@@ -1,14 +1,14 @@
 {
-  "name": "react-intime-website",
-  "description": "Website for React Intime",
+  "name": "react-ensemble-website",
+  "description": "Website for React Ensemble",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
   "author": "Joseph Cowman",
-  "repository": "github:jcowman2/react-intime",
-  "homepage": "https://github.com/jcowman2/react-intime",
+  "repository": "github:jcowman2/react-ensemble",
+  "homepage": "https://github.com/jcowman2/react-ensemble",
   "scripts": {
-    "clean": "gatsby clean"
+    "clean": "gatsby clean && trash .docz"
   },
   "dependencies": {
     "@theme-ui/presets": "^0.3.0",
@@ -18,10 +18,11 @@
     "gatsby-theme-docz": "^2.3.1-alpha.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-intime": "^0.1.0",
+    "react-ensemble": "^0.1.0",
     "theme-ui": "^0.3.1"
   },
   "devDependencies": {
-    "@types/theme-ui": "^0.3.6"
+    "@types/theme-ui": "^0.3.6",
+    "trash-cli": "^3.1.0"
   }
 }

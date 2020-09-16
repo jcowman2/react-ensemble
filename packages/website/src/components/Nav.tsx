@@ -65,7 +65,7 @@ const Nav: React.FC = props => {
           <StyledNavLink
             external
             label="Github"
-            linkTo="https://github.com/jcowman2/react-intime"
+            linkTo="https://github.com/jcowman2/react-ensemble"
           />
         </Flex>
       </Flex>

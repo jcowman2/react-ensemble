@@ -1,5 +1,5 @@
 {
-  "name": "@jcowman/react-intime-root",
+  "name": "@jcowman/react-ensemble-root",
   "private": true,
   "devDependencies": {
     "cz-conventional-changelog": "3.3.0",

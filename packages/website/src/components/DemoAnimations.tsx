@@ -1,5 +1,5 @@
 import React from "react";
-import { Controller, Timeline } from "react-intime";
+import { Controller, Timeline } from "react-ensemble";
 
 interface DemoAnimationState {
   borderRadius: number;

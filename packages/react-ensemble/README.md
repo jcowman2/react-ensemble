@@ -1,4 +1,4 @@
-# React Intime
+# React Ensemble
 
 Intuitive and precise control over complex animation timing for React
 

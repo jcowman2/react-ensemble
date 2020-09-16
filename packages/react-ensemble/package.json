@@ -1,11 +1,11 @@
 {
-  "name": "react-intime",
+  "name": "react-ensemble",
   "version": "0.1.0",
   "description": "Intuitive and precise control over complex animation timing for React",
   "author": "Joseph Cowman",
   "license": "MIT",
-  "repository": "github:jcowman2/react-intime",
-  "homepage": "https://github.com/jcowman2/react-intime",
+  "repository": "github:jcowman2/react-ensemble",
+  "homepage": "https://github.com/jcowman2/react-ensemble",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
