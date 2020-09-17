@@ -1,21 +1,10 @@
 ---
-name: Timeline
-route: /docs/components/timeline
+title: Docs Landing
 ---
 
-import { Playground, Props } from "docz";
-import Timeline from "../../../react-ensemble/src/components/Timeline/Timeline";
-
-# Timeline Reference
-
-## Props
-
-<Props of={Timeline} />
-
-## Demo
-
-<Playground>
-  {() => {
+<Playground
+  code={`
+() => {
     const [tick, setTick] = React.useState(0);
     const defaultSquareState = {
       x: 0,
@@ -71,12 +60,13 @@ import Timeline from "../../../react-ensemble/src/components/Timeline/Timeline";
               top: y,
               width: width,
               height: width,
-              transform: `rotate(${angle}deg)`,
-              backgroundColor: color
+              backgroundColor: color,
+              transform: \`rotate(\$\{angle\}deg)\`,
             }}
           />
         </div>
       </>
     );
-  }}
-</Playground>
+  }
+`}
+/>
