@@ -1,17 +1,10 @@
 ---
-name: Introduction
-route: /docs
+title: Docs Landing
 ---
 
-import { Playground, Props } from "docz";
-import { TrackUtils, Controller, Timeline } from "react-intime";
-
-# Docs Landing Page
-
-Hello world!
-
-<Playground>
-  {() => {
+<Playground
+  code={`
+() => {
     const [tick, setTick] = React.useState(0);
     const defaultSquareState = {
       x: 0,
@@ -67,12 +60,13 @@ Hello world!
               top: y,
               width: width,
               height: width,
-              transform: `rotate(${angle}deg)`,
-              backgroundColor: color
+              backgroundColor: color,
+              transform: \`rotate(\$\{angle\}deg)\`,
             }}
           />
         </div>
       </>
     );
-  }}
-</Playground>
+  }
+`}
+/>
