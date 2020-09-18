@@ -19,6 +19,11 @@ export default merge(preset, {
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 52, 64, 72],
   styles: {
+    a: {
+      textDecoration: "none",
+      color: "primary",
+      fontWeight: "bold"
+    },
     code: {
       ...prismPreset
     },
