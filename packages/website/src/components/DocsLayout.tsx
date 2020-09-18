@@ -2,12 +2,12 @@ import React from "react";
 /** @jsx jsx */
 import { jsx, Container, Flex, Heading } from "theme-ui";
 import { MDXProvider } from "@mdx-js/react";
-import Prism from "@theme-ui/prism";
 import { Link } from "gatsby";
 import { Controller, Timeline } from "react-ensemble";
 import Layout from "./Layout";
 import SideNav from "./SideNav";
 import Playground from "./Playground";
+import CodeBlock from "./CodeBlock";
 
 const components = {
   Link,
@@ -15,7 +15,7 @@ const components = {
   Timeline,
   Playground,
   pre: (props: any) => props.children,
-  code: Prism
+  code: CodeBlock
 };
 
 const DocsLayout: React.FC<{
