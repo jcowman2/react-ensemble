@@ -51,7 +51,7 @@
     "webpack-node-externals": "^2.5.2"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "alphanum-sort": "^1.0.2",
