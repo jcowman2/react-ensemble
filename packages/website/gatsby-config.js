@@ -1,3 +1,5 @@
+const remarkSlug = require("remark-slug");
+
 module.exports = {
   plugins: [
     "gatsby-plugin-theme-ui",
@@ -14,7 +16,8 @@ module.exports = {
         defaultLayouts: {
           // default: require.resolve("./src/components/layouts/Layout.tsx"),
           docs: require.resolve("./src/components/DocsLayout.tsx")
-        }
+        },
+        remarkPlugins: [remarkSlug]
       }
     }
   ]

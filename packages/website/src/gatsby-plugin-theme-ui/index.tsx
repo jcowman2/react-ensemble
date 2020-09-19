@@ -10,6 +10,13 @@ export default merge(preset, {
     button: {
       textDecoration: "none",
       color: "background"
+    },
+    heading: {
+      color: "text",
+      textDecoration: "none",
+      "&:hover": {
+        textDecoration: "underline"
+      }
     }
   },
   text: {
