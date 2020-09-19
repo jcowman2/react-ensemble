@@ -3,6 +3,12 @@ import prismPreset from "../theme/prism-theme-ui";
 import { merge } from "theme-ui";
 
 export default merge(preset, {
+  colors: {
+    codeBg: "#f5f2f0"
+  },
+  fonts: {
+    monospace: "Menlo, monospace"
+  },
   links: {
     nav: {
       textDecoration: "none"

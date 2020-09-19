@@ -4,7 +4,9 @@
 export default {
   plain: {
     color: "black",
-    backgroundColor: "#f5f2f0"
+    backgroundColor: "#f5f2f0",
+    fontSize: "14px",
+    fontFamily: "Menlo, monospace"
   },
   styles: [
     {
