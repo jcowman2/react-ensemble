@@ -2,4 +2,32 @@
 title: Overview
 ---
 
-React Ensemble is a library for building animations in [React](https://reactjs.org/). It's designed to help with animations that need to have really precise timing or a lot of moving parts.
+React Ensemble is a library for building animations in [React](https://reactjs.org/). It's designed to help with longer animations that need to have precise timing or a lot of moving parts.
+
+If you want to dive right in with some interactive examples, check out [Quick Start](/docs/quick-start). To learn what this library is all about, read on.
+
+## Motivation
+
+Once upon a time, I was working on a React project that needed to animate blocks of text in perfect sync with an audio track. While there were [several animation libraries](#alternatives-to-react-ensemble) out there already, none of them seemed to provide two key features I needed:
+
+First, I needed **precise absolute timing**. Usually, we think of web animations as transitions with relative times. A UI element might _"fade in for 0.5 seconds"_ or _"rotate 180 degrees over 1 second."_ But since I was working with an audio track, I had to work in terms of absolute timestamps. My elements needed to _"fade in at 01:35.2 and fade out at 01:38.7."_
+
+Second, I wanted to **keep my animation data and rendering logic separate**. The most popular way to script web animations is to tie smaller transitions to specific DOM elements. For example, a button may be scripted to shine when a user hovers over it. This method is great for gestures and aesthetics, but it isn't well suited to longer animations.
+
+I needed a system that could take my data and my timestamps (essentially, my animation's _script_) and tell me what to render at any given moment. And so, React Ensemble was born!
+
+## Main Features
+
+React Ensemble is designed to provide the animator (that's you!) with three main abilities:
+
+1. [Granular Control](#granular-control)
+2. [Immediate Playback](#immediate-playback)
+3. [Rendering Freedom](#rendering-freedom)
+
+### Granular Control
+
+### Immediate Playback
+
+### Rendering Freedom
+
+## Alternatives to React Ensemble
