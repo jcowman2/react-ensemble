@@ -8,7 +8,7 @@ export default merge(preset, {
     text: "#231d35",
     primary: "#eb665b",
     secondary: "#f2914a",
-    tertiary: "#f2914a"
+    tertiary: "#ecce6a"
   },
   fonts: {
     monospace: "Menlo, monospace",
