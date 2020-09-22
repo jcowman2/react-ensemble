@@ -19,6 +19,17 @@ module.exports = {
         },
         remarkPlugins: [remarkSlug]
       }
+    },
+    {
+      resolve: "gatsby-plugin-web-font-loader",
+      options: {
+        typekit: {
+          id: "wtf4iyj"
+        },
+        google: {
+          families: ["Open Sans:400,700"]
+        }
+      }
     }
   ]
 };
