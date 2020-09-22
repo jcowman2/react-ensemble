@@ -12,7 +12,7 @@ Once upon a time, I was working on a React project that needed to animate blocks
 
 First, I needed **precise absolute timing**. Usually, we think of web animations as transitions with relative times. A UI element might _"fade in for 0.5 seconds"_ or _"rotate 180 degrees over 1 second."_ But since I was working with an audio track, I had to work in terms of absolute timestamps. My elements needed to _"fade in at 01:35.2 and fade out at 01:38.7."_
 
-Second, I wanted to **keep my animation data and rendering logic separate**. The most popular way to script web animations is to tie smaller transitions to specific DOM elements. For example, a button may be scripted to shine when a user hovers over it. This method is great for gestures and aesthetics, but it isn't well suited to longer animations.
+Second, I wanted to **keep my animation data and rendering logic separate**. A common way to script web animations is to tie smaller transitions to specific DOM elements. For example, a button may be scripted to shine when a user hovers over it. This method is great for gestures and aesthetics, but it isn't well suited to longer animations.
 
 I needed a system that could take my data and my timestamps (essentially, my animation's _script_) and tell me what to render at any given moment. And so, React Ensemble was born!
 
@@ -31,3 +31,12 @@ React Ensemble is designed to provide the animator (that's you!) with three main
 ### Rendering Freedom
 
 ## Alternatives to React Ensemble
+
+As an open source fan and contributor, I believe in choosing the right tool for the job and supporting other awesome projects. If React Ensemble isn't what you need, consider checking out these React animation libraries:
+
+- [React Spring](https://github.com/pmndrs/react-spring): Spring physics-based
+- [Framer Motion](https://github.com/framer/motion): Production-ready gesture support
+- [React Motion](https://github.com/chenglou/react-motion): Minimalist spring animation
+- [React Move](https://github.com/sghall/react-move): Data-driven animations
+- [Use-Web-Animations](https://github.com/wellyshen/use-web-animations): Hook for the Web Animations API
+- Have another recommendation? [Open a PR!](https://github.com/jcowman2/react-ensemble/issues/new)

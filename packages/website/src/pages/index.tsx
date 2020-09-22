@@ -4,6 +4,7 @@ import { jsx, Container, Box, Flex, Text } from "theme-ui";
 import Layout from "../components/Layout";
 import AnimationCard from "../components/AnimationCard";
 import LinkButton from "../components/LinkButton";
+import GranularAnimation from "../components/animations/GranularAnimation";
 
 export default function Home() {
   return (
@@ -26,9 +27,9 @@ export default function Home() {
       </Container>
       <Container
         sx={{
-          mt: 5,
           display: "flex",
-          justifyContent: ["flex-start", "center"]
+          justifyContent: ["flex-start", "center"],
+          mt: [5, 5, 0]
         }}
       >
         <Flex
@@ -45,7 +46,9 @@ export default function Home() {
               "Use the powerful utilities included with d3-ease and d3-interpolate, or write your own."
             ]}
             sx={{ mr: [0, 0, 5], mb: 4 }}
-          />
+          >
+            <GranularAnimation />
+          </AnimationCard>
           <AnimationCard
             body={[
               "Play your animations effortlessly with native support for playback controls. No configuration necessary!"
@@ -55,7 +58,7 @@ export default function Home() {
           />
           <AnimationCard
             body={[
-              "React Ensemble isn’t restricted to a single rendering engine—easily wire in Canvas, Konva, and more."
+              "React Ensemble isn’t restricted to a single rendering method—easily wire in Canvas, Konva, and more."
             ]}
             title="Render Whatever"
             sx={{ mb: 4 }}
