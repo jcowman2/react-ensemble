@@ -14,18 +14,10 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
   const variableStyles = props.invert
     ? {
         bg: "background",
-        color: "primary",
-        "&:hover": {
-          color: "secondary",
-          borderColor: "secondary"
-        }
+        color: "primary"
       }
     : {
-        bg: "primary",
-        "&:hover": {
-          bg: "secondary",
-          borderColor: "secondary"
-        }
+        bg: "primary"
       };
   return (
     <Link

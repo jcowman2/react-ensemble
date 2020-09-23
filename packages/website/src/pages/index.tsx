@@ -11,6 +11,7 @@ export default function Home() {
     <Layout>
       <Container
         p={[0, 0, 5]}
+        pt={[0, 5, 0]}
         mt={4}
         sx={{ maxWidth: ["360px", "360px", "1280px"] }}
       >
@@ -19,8 +20,18 @@ export default function Home() {
             <strong>Intuitive</strong> and <strong>precise</strong> control for
             complex animations in React
           </Text>
-          <Flex sx={{ mt: 4, justifyContent: "center" }}>
-            <LinkButton label="Get Started" linkTo="/docs/" sx={{ mr: 3 }} />
+          <Flex
+            sx={{
+              mt: 4,
+              justifyContent: "center",
+              flexDirection: ["column", "row", "row"]
+            }}
+          >
+            <LinkButton
+              label="Get Started"
+              linkTo="/docs/"
+              sx={{ mr: [0, 3, 3], mb: [3, 0, 0] }}
+            />
             <LinkButton label="Browse Docs" linkTo="/docs/" invert />
           </Flex>
         </Container>

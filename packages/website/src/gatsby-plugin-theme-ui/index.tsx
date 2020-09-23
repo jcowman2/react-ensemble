@@ -22,13 +22,14 @@ export default merge(preset, {
     button: {
       textDecoration: "none",
       color: "background",
-      borderStyle: "solid",
-      borderColor: "primary",
-      borderWidth: "3px",
-      py: [1, 2, 3],
-      px: [2, 3, 4],
+      py: 3,
+      px: 4,
       borderRadius: 5,
-      fontWeight: "bold"
+      fontWeight: "bold",
+      boxShadow: "0px 2px 5px 0px rgba(0,0,0,0.1)",
+      "&:hover": {
+        opacity: 0.8
+      }
     },
     heading: {
       color: "text",
