@@ -1,4 +1,4 @@
-export interface ITrackRegion<State extends object = {}> {
+export interface ITrackRegion<State extends object = any> {
   start?: number;
   duration?: number;
   end?: number;
@@ -9,7 +9,7 @@ export interface ITrackRegion<State extends object = {}> {
   loop?: ILoopConfig | boolean;
 }
 
-export interface ICalculatedTrackRegion<State extends object = {}>
+export interface ICalculatedTrackRegion<State extends object = any>
   extends Required<ITrackRegion<State>> {
   id: string;
   activeVars: Set<keyof State>;
@@ -52,7 +52,7 @@ export interface IResolverLayerData<T> {
   value: T;
 }
 
-export interface ITrackConfig<State extends object = {}> {
+export interface ITrackConfig<State extends object = any> {
   endBehavior?: TimelineEndBehavior;
   easing?: EasingFunction;
   interp?: InterpolationFunction;

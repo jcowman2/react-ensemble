@@ -12,7 +12,7 @@ const DEFAULT_REVERSE_MODIFIER = -2;
 const DEFAULT_PANEL_STYLE = {};
 const DEFAULT_PANEL = SimpleControlPanel;
 
-export interface IControllerProps<State extends object = {}> {
+export interface IControllerProps<State extends object = any> {
   children: (
     controlProps: Pick<
       ITimelineProps<State>,
@@ -28,8 +28,8 @@ export interface IControllerProps<State extends object = {}> {
   panel?: (props: IControlPanelProps) => JSX.Element;
 }
 
-const Controller = <State extends object = {}>(
-  props: React.PropsWithChildren<IControllerProps<State>>
+const Controller = <State extends object = any>(
+  props: IControllerProps<State>
 ): JSX.Element | null => {
   const {
     children,

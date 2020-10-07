@@ -8,10 +8,10 @@ export interface ITickEvent {
   value: number;
 }
 
-export interface IUpdateEvent<State extends object = {}> {
+export interface IUpdateEvent<State extends object = any> {
   state: State;
 }
 
-export interface ILoadEvent<State extends object = {}> {
+export interface ILoadEvent<State extends object = any> {
   animation: IAnimation<State>;
 }
