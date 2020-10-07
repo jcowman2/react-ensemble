@@ -14,7 +14,7 @@
   "scripts": {
     "build:src": "webpack --mode production",
     "build:types": "tsc --emitDeclarationOnly",
-    "build": "npm run build:src && npm run build:types",
+    "build": "yarn run build:src && yarn run build:types",
     "clean": "trash ./dist",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "test": "jest"
