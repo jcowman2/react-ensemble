@@ -5,6 +5,7 @@ import Layout from "../components/Layout";
 import AnimationCard from "../components/AnimationCard";
 import LinkButton from "../components/LinkButton";
 import GranularAnimation from "../components/animations/GranularAnimation";
+import WhateverAnimation from "../components/animations/WhateverAnimation";
 
 export default function Home() {
   return (
@@ -73,7 +74,9 @@ export default function Home() {
             ]}
             title="Render Whatever"
             sx={{ mb: 4 }}
-          />
+          >
+            <WhateverAnimation />
+          </AnimationCard>
         </Flex>
       </Container>
     </Layout>

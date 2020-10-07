@@ -2,17 +2,9 @@ import React from "react";
 /** @jsx jsx */
 import { jsx } from "theme-ui";
 import { Controller, Timeline, Lib } from "react-ensemble";
-import theme from "../../gatsby-plugin-theme-ui/index";
+import { PRIMARY, SECONDARY, TERTIARY, TEXT } from "../../theme/colors";
 
 const { d3Ease } = Lib;
-
-const {
-  primary: PRIMARY,
-  secondary: SECONDARY,
-  tertiary,
-  text: TEXT
-} = theme.colors!;
-const TERTIARY = tertiary as string;
 
 interface GranularAnimationState {
   s1color: string;
