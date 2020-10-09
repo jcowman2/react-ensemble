@@ -32,6 +32,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-explicit-any": 0,
     "react/prop-types": [0], // Don't require prop type validation since we're using typescript
     "prettier/prettier": [
       "error",

@@ -14,7 +14,6 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
   const variableStyles = props.invert
     ? {
         bg: "background",
-
         color: "primary"
       }
     : {
@@ -25,16 +24,7 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
       to={props.linkTo}
       sx={{
         variant: "links.button",
-        ...variableStyles,
-        borderStyle: "solid",
-        borderColor: "primary",
-        borderWidth: "3px",
-        py: [1, 2, 3],
-        px: [2, 3, 4],
-        borderRadius: 3,
-        "&:hover": {
-          opacity: 0.5
-        }
+        ...variableStyles
       }}
       className={props.className}
     >

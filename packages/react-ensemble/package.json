@@ -14,7 +14,7 @@
   "scripts": {
     "build:src": "webpack --mode production",
     "build:types": "tsc --emitDeclarationOnly",
-    "build": "npm run build:src && npm run build:types",
+    "build": "yarn run build:src && yarn run build:types",
     "clean": "trash ./dist",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "test": "jest"
@@ -51,7 +51,7 @@
     "webpack-node-externals": "^2.5.2"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "alphanum-sort": "^1.0.2",

@@ -2,10 +2,8 @@ import React from "react";
 /** @jsx jsx */
 import { jsx, NavLink } from "theme-ui";
 import { Location } from "@reach/router";
-// @ts-ignore
 import { AccordionNav } from "@theme-ui/sidenav";
-// @ts-ignore
-import Links from "./docLinks.mdx";
+import Links from "../content/docLinks.mdx";
 
 const makeNavWrapper: (location: {
   pathname: string;

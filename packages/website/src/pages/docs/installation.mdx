@@ -2,6 +2,34 @@
 title: Installation
 ---
 
-```
+React Ensemble is hosted on [npm](https://npmjs.com) under the package name [react-ensemble](https://www.npmjs.com/package/react-ensemble).
+
+You can add it to your project from the command line with [Yarn](https://classic.yarnpkg.com/en/):
+
+```shell
 yarn add react-ensemble
+```
+
+Or with [npm](https://npmjs.com):
+
+```shell
+npm i react-ensemble
+```
+
+## Compatibility with React
+
+React Ensemble requires an installation of [react](https://www.npmjs.com/package/react) v16.8+. If you are starting a new React project with [Create React App](https://create-react-app.dev/), your `package.json` dependencies should look something like this:
+
+```json
+"dependencies": {
+  "react": "^16.13.1",
+  "react-dom": "^16.13.1",
+  "react-ensemble": "^0.1.1"
+}
+```
+
+Otherwise, be sure to add the missing package:
+
+```shell
+yarn add react@latest
 ```

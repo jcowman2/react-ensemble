@@ -18,7 +18,7 @@ export const TIMELINE_DEFAULTS = {
   onLoad: () => {}
 };
 
-export interface ITimelineProps<State extends object = {}> {
+export interface ITimelineProps<State extends object = any> {
   track: ITrackRegion<State>[];
   defaultState: State;
 
@@ -47,7 +47,7 @@ export interface ITimelineProps<State extends object = {}> {
   onLoad?: (event: ILoadEvent<State>) => void;
 }
 
-const Timeline = <State extends object = {}>(
+const Timeline = <State extends object = any>(
   props: React.PropsWithChildren<ITimelineProps<State>>
 ): null => {
   const {
