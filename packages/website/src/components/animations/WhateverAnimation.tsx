@@ -1,7 +1,8 @@
 import React from "react";
 /** @jsx jsx */
 import { jsx } from "theme-ui";
-import { Controller, Timeline } from "react-ensemble";
+import { Timeline } from "react-ensemble";
+import { useAnimationControl } from "../../hooks/animationControl";
 
 interface WhateverAnimationState {
   points: string;
@@ -75,23 +76,23 @@ const trackAppear = [
 ];
 
 const WhateverAnimation: React.FC = () => {
+  const { playbackSpeed, value, onLoad } = useAnimationControl();
   const [spriteState, setSpriteState] = React.useState(defaultState);
 
   const { points, order, colors } = spriteState;
 
   return (
     <React.Fragment>
-      <Controller<WhateverAnimationState> visible={false} trigger="auto">
-        {props => (
-          <Timeline
-            defaultState={defaultState}
-            onUpdate={({ state }) => setSpriteState(state)}
-            endBehavior="boomerang"
-            track={[...trackAppear]}
-            {...props}
-          />
-        )}
-      </Controller>
+      <Timeline
+        playing={false}
+        defaultState={defaultState}
+        onUpdate={({ state }) => setSpriteState(state)}
+        endBehavior="boomerang"
+        track={[...trackAppear]}
+        playbackSpeed={playbackSpeed}
+        value={value}
+        onLoad={onLoad}
+      />
       <div
         sx={{
           width: "300px",

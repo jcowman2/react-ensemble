@@ -1,8 +1,9 @@
 import React from "react";
 /** @jsx jsx */
 import { jsx } from "theme-ui";
-import { Controller, Timeline, Lib } from "react-ensemble";
+import { Timeline, Lib } from "react-ensemble";
 import { PRIMARY, SECONDARY, TERTIARY, TEXT } from "../../theme/colors";
+import { useAnimationControl } from "../../hooks/animationControl";
 
 const { d3Ease } = Lib;
 
@@ -232,6 +233,7 @@ const trackCollapse = [
 ];
 
 const GranularAnimation: React.FC = () => {
+  const { playbackSpeed, value, onLoad } = useAnimationControl();
   const [spriteState, setSpriteState] = React.useState(defaultState);
 
   const {
@@ -262,23 +264,22 @@ const GranularAnimation: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Controller<GranularAnimationState> visible={false} trigger="auto">
-        {props => (
-          <Timeline
-            defaultState={defaultState}
-            onUpdate={({ state }) => setSpriteState(state)}
-            endBehavior="boomerang"
-            track={[
-              ...trackAppear,
-              ...trackStairs,
-              ...trackStairsDown,
-              ...trackZip,
-              ...trackCollapse
-            ]}
-            {...props}
-          />
-        )}
-      </Controller>
+      <Timeline
+        playing={false}
+        defaultState={defaultState}
+        onUpdate={({ state }) => setSpriteState(state)}
+        endBehavior="boomerang"
+        track={[
+          ...trackAppear,
+          ...trackStairs,
+          ...trackStairsDown,
+          ...trackZip,
+          ...trackCollapse
+        ]}
+        playbackSpeed={playbackSpeed}
+        value={value}
+        onLoad={onLoad}
+      />
       <div
         sx={{
           width: "150px",
