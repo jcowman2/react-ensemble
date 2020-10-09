@@ -8,7 +8,8 @@
   "repository": "github:jcowman2/react-ensemble",
   "homepage": "https://github.com/jcowman2/react-ensemble",
   "scripts": {
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "build-site": "gatsby build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
