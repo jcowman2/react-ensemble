@@ -20,7 +20,7 @@ export default function Home() {
       <Layout>
         <Container
           p={[0, 0, 5]}
-          pt={[0, 5, 0]}
+          pt={[0, 5, 4]}
           mt={4}
           sx={{ maxWidth: ["360px", "360px", "1280px"] }}
         >

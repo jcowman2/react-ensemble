@@ -11,6 +11,9 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/react-fontawesome": "^0.1.11",
     "@mdx-js/mdx": "^1.6.17",
     "@mdx-js/react": "^1.6.17",
     "@theme-ui/presets": "0.4.0-rc.1",
