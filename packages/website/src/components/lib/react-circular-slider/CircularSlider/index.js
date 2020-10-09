@@ -74,8 +74,9 @@ const CircularSlider = ({
         dataIndex = 0,
         progressLineCap = 'round',
         renderLabelValue = null,
-        children,
+        children = null,
         onChange = value => {},
+        onDragStateChange = value => {}
     }) => {
     const initialState = {
         mounted: false,
@@ -224,6 +225,15 @@ const CircularSlider = ({
 
     useEventListener(SLIDER_EVENT.MOVE, onMouseMove);
     useEventListener(SLIDER_EVENT.UP, onMouseUp);
+
+    const [lastDragState, setLastDragState] = React.useState(false);
+    const isDragging = state.isDragging;
+    React.useEffect(() => {
+        if (isDragging !== lastDragState) {
+            setLastDragState(isDragging);
+            onDragStateChange(isDragging);
+        }
+    }, [onDragStateChange, isDragging, lastDragState])
 
     return (
         <div style={{...styles.circularSlider, ...(state.mounted && styles.mounted)}} ref={circularSlider}>

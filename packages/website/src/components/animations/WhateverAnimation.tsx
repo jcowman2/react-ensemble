@@ -103,6 +103,7 @@ const WhateverAnimation: React.FC = () => {
         <svg height="150" width="300">
           {order.map(id => (
             <polygon
+              key={id}
               points={points}
               // @ts-ignore
               transform={`translate(${spriteState[`s${id}left`]}, ${
