@@ -22,7 +22,7 @@ export default function Home() {
           p={[0, 0, 5]}
           pt={[0, 5, 4]}
           mt={4}
-          sx={{ maxWidth: ["360px", "360px", "1280px"] }}
+          sx={{ maxWidth: ["360px", "360px", "1080px"] }}
         >
           <Container sx={{ textAlign: "center" }}>
             <Text sx={{ variant: "text.hero" }}>
