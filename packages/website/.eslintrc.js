@@ -23,7 +23,7 @@ module.exports = {
     "*.config.js",
     "node_modules/",
     ".cache/",
-    ".docz/",
+    "src/**/lib/",
     "public"
   ],
   rules: {
@@ -33,6 +33,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
     "react/prop-types": [0], // Don't require prop type validation since we're using typescript
+    "react/display-name": 0,
     "prettier/prettier": [
       "error",
       { arrowParens: "avoid", trailingComma: "none" }

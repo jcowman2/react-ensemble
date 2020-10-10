@@ -1,0 +1,6 @@
+{
+  "eslint.workingDirectories": [
+    { "directory": "packages/react-ensemble" },
+    { "directory": "packages/website" }
+  ]
+}
