@@ -532,13 +532,12 @@ describe("TrackUtils.gen()", () => {
       expect(getFrameState(1250)).toEqual({ x: 2.5, y: 5 });
     });
 
-    test.skip("result#getFrameState resolves 'boomerang' master end condition for a group correctly", () => {
+    test("result#getFrameState resolves 'boomerang' master end condition for a group correctly", () => {
       const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
         easing: Lib.d3Ease.easeLinear,
         endBehavior: "boomerang"
       });
-      // expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
-      console.log("START");
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
       expect(getFrameState(1250)).toEqual({ x: 7.5, y: 5 });
     });
   });

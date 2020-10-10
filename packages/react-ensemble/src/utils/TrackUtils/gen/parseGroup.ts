@@ -55,12 +55,18 @@ export const parseGroup = <State extends object>(
     }
   }
 
-  const animation = genAnimation(
-    regions,
-    workingState,
-    config, // TODO - account for local config
-    layerName
-  );
+  const animConfig: Required<ITrackConfig> = {
+    ...config,
+    endBehavior: "continue"
+  };
+  if (group.interp) {
+    animConfig.interp = group.interp;
+  }
+  if (group.easing) {
+    animConfig.easing = group.easing;
+  }
+
+  const animation = genAnimation(regions, workingState, animConfig, layerName);
   const animationEnd = isNumber(group.end)
     ? group.end
     : animation.length + animationStart;
