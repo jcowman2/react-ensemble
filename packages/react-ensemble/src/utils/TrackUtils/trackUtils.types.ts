@@ -1,20 +1,41 @@
-export interface ITrackRegion<State extends object = any> {
+interface ITrackRegionBase {
   start?: number;
-  duration?: number;
   end?: number;
-  state?: RegionState<State>;
   easing?: EasingFunction | null;
   interp?: InterpolationFunction | null;
   layer?: string;
   loop?: ILoopConfig | boolean;
 }
 
-export interface ICalculatedTrackRegion<State extends object = any>
-  extends Required<ITrackRegion<State>> {
+export interface ITrackRegionAtom<State extends object = any>
+  extends ITrackRegionBase {
+  duration?: number;
+  state?: RegionState<State>;
+}
+
+export interface ITrackRegionGroup<State extends object = any>
+  extends ITrackRegionBase {
+  regions: ITrackRegion<State>[];
+  useRelativeTime?: boolean;
+}
+
+export type ITrackRegion<State extends object = any> =
+  | ITrackRegionAtom<State>
+  | ITrackRegionGroup<State>;
+
+export interface ICalculatedTrackRegion<State extends object = any> {
   id: string;
   activeVars: Set<keyof State>;
   get: (current: number) => State;
+  start: number;
+  end: number;
+  layer: string;
 }
+
+export type IValidatedTrackRegionAtom<State extends object = any> = Required<
+  ITrackRegionAtom
+> &
+  ICalculatedTrackRegion<State>;
 
 export interface ILoopConfig {
   boomerang?: boolean;
@@ -29,9 +50,7 @@ export type InterpolationFunction = <T>(
   end: T
 ) => (progress: number) => T;
 
-/** @hidden */
 export type RegionState<V> = { [K in keyof V]?: RegionStateProperty<V[K]> };
-/** @hidden */
 export type RegionStateProperty<T> = {
   from?: T;
   to?: T;
