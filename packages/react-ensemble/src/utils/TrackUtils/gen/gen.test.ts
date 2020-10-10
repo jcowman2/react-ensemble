@@ -332,6 +332,20 @@ describe("TrackUtils.gen()", () => {
     expect(getFrameState(1250)).toEqual({ x: 7.5 });
   });
 
+  test("throws an error if an atom includes 'useRelativeTime'", () => {
+    expect(() => {
+      gen(
+        [
+          {
+            duration: 1000,
+            useRelativeTime: true
+          }
+        ],
+        { x: 0 }
+      );
+    }).toThrowError();
+  });
+
   describe("Looping", () => {
     test("result#length is the length of the longest active track, not taking a passive loop into account", () => {
       const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
@@ -539,6 +553,34 @@ describe("TrackUtils.gen()", () => {
       });
       expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
       expect(getFrameState(1250)).toEqual({ x: 7.5, y: 5 });
+    });
+
+    test("throws an error if a group includes 'state'", () => {
+      expect(() => {
+        gen(
+          [
+            {
+              regions: [{ duration: 1000 }],
+              state: { x: { to: 1 } }
+            }
+          ],
+          { x: 0 }
+        );
+      }).toThrowError();
+    });
+
+    test("throws an error if a group includes 'duration'", () => {
+      expect(() => {
+        gen(
+          [
+            {
+              regions: [{ duration: 1000 }],
+              duration: 800
+            }
+          ],
+          { x: 0 }
+        );
+      }).toThrowError();
     });
   });
 });

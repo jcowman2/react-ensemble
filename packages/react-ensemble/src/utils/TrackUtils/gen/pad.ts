@@ -1,30 +1,18 @@
-import {
-  RegionState,
-  IValidatedTrackRegionAtom,
-  ITrackRegionAtom,
-  ICalculatedTrackRegion
-} from "../trackUtils.types";
+import { ITrackRegionAtom, ICalculatedTrackRegion } from "../trackUtils.types";
 import { newId, clampString, isNumber } from "./helpers";
-import { createDeltaState } from "./stateUtils";
 
-export const genPadRegion = <S extends object, R extends RegionState<S>>(
+export const genPadRegion = <S extends object>(
   start: number,
   end: number,
-  stateChanges: R,
   rawState: S,
   layer: string
-): IValidatedTrackRegionAtom<S> => ({
+): ICalculatedTrackRegion<S> => ({
   id: newId("region_pad"),
   start,
   end,
-  duration: end - start,
-  state: stateChanges,
-  easing: null,
-  interp: null,
   layer,
   activeVars: new Set(),
-  get: () => ({ ...rawState }),
-  loop: false
+  get: () => ({ ...rawState })
 });
 
 export const getRegionSummary = <State extends object>(
@@ -86,16 +74,7 @@ export const findRegionBoundsAndPad = <State extends object>(
     }
 
     if (start > newTime) {
-      const { regionState } = createDeltaState(currentState, {});
-
-      padRegion = genPadRegion(
-        newTime,
-        start,
-        regionState,
-        currentState,
-        layerName
-      );
-
+      padRegion = genPadRegion(newTime, start, currentState, layerName);
       newTime = start;
     }
   } else {

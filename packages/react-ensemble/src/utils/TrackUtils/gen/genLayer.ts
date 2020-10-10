@@ -3,7 +3,6 @@ import {
   ICalculatedTrackRegion,
   ITrackRegion
 } from "../trackUtils.types";
-import { createDeltaState } from "./stateUtils";
 import { isGroup, parseGroup } from "./parseGroup";
 import { parseAtom } from "./parseAtom";
 import { genPadRegion } from "./pad";
@@ -64,13 +63,10 @@ export const genLayer = <State extends object>(
   });
 
   if (!endsWithPassiveLoop) {
-    const { regionState } = createDeltaState(workingState, {});
-
     regions.push(
       genPadRegion(
         currentTime,
         Number.MAX_SAFE_INTEGER,
-        regionState,
         workingState,
         layerName
       )

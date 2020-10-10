@@ -1,6 +1,6 @@
 import {
   ITrackConfig,
-  IValidatedTrackRegionAtom,
+  ITrackRegionAtom,
   RegionState
 } from "../trackUtils.types";
 import { isFunction, isInterpolatable } from "./helpers";
@@ -13,7 +13,7 @@ interface IInterpolateStateResult<State> {
 /** Builds an atomic state interpolator ;) */
 export const buildAtomicStateInterpolator = <State extends object>(
   region: Pick<
-    IValidatedTrackRegionAtom<State>,
+    Required<ITrackRegionAtom<State>>,
     "easing" | "interp" | "start" | "duration" | "state"
   >,
   config: Required<ITrackConfig<State>>

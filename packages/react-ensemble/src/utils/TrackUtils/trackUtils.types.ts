@@ -32,11 +32,6 @@ export interface ICalculatedTrackRegion<State extends object = any> {
   layer: string;
 }
 
-export type IValidatedTrackRegionAtom<State extends object = any> = Required<
-  ITrackRegionAtom
-> &
-  ICalculatedTrackRegion<State>;
-
 export interface ILoopConfig {
   boomerang?: boolean;
   count?: number;

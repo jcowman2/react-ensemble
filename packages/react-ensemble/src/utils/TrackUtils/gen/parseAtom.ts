@@ -2,13 +2,15 @@ import {
   ICalculatedTrackRegion,
   ITrackConfig,
   ITrackRegion,
-  ITrackRegionAtom,
-  IValidatedTrackRegionAtom
+  ITrackRegionAtom
 } from "../trackUtils.types";
 import { newId } from "./helpers";
 import { genLoopRegion } from "./loop";
 import { findRegionBoundsAndPad } from "./pad";
 import { createDeltaState, buildAtomicStateInterpolator } from "./stateUtils";
+import { errorThrower } from "./validation";
+
+const FORBIDDEN_FIELDS = ["regions", "useRelativeTime"];
 
 export const parseAtom = <State extends object>(
   region: ITrackRegionAtom,
@@ -19,6 +21,14 @@ export const parseAtom = <State extends object>(
   track: ITrackRegion<State>[],
   config: Required<ITrackConfig<State>>
 ) => {
+  const err = errorThrower(layerName, index);
+
+  for (const field of FORBIDDEN_FIELDS) {
+    if (region[field] !== undefined) {
+      err(`An atom may not contain the '${field}' property.`);
+    }
+  }
+
   const boundResult = findRegionBoundsAndPad(
     region,
     index,
@@ -64,7 +74,7 @@ export const parseAtom = <State extends object>(
 
   const stateGetter = (current: number) => stateInterpolator(current).state;
   let restRegionConfig: { get: (current: number) => State } & Partial<
-    IValidatedTrackRegionAtom<State>
+    Required<ITrackRegionAtom<State>>
   > = { get: stateGetter };
 
   if (providedLoop) {

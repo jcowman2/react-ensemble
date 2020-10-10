@@ -7,8 +7,9 @@ import {
 import { genAnimation } from "./genAnimation";
 import { isNumber, newId } from "./helpers";
 import { genPadRegion } from "./pad";
-import { createDeltaState } from "./stateUtils";
 import { errorThrower } from "./validation";
+
+const FORBIDDEN_FIELDS = ["state", "duration"];
 
 export const isGroup = (region: ITrackRegion): region is ITrackRegionGroup => {
   return (region as any).regions;
@@ -23,11 +24,18 @@ export const parseGroup = <State extends object>(
   track: ITrackRegion<State>[],
   config: Required<ITrackConfig>
 ) => {
+  const err = errorThrower(layerName, index);
+
+  for (const field of FORBIDDEN_FIELDS) {
+    if (group[field] !== undefined) {
+      err(`A group may not contain the '${field}' property.`);
+    }
+  }
+
   const {
     regions,
     useRelativeTime = false // TODO - implement use relative time
   } = group;
-  const err = errorThrower(layerName, index);
 
   let animationStart = currentTime;
   const newRegions: ICalculatedTrackRegion[] = [];
@@ -42,11 +50,9 @@ export const parseGroup = <State extends object>(
     }
 
     if (start > currentTime) {
-      const { regionState } = createDeltaState(workingState, {});
       const padRegion = genPadRegion(
         currentTime,
         start,
-        regionState,
         workingState,
         layerName
       );

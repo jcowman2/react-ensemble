@@ -1,4 +1,4 @@
-import { IValidatedTrackRegionAtom } from "../trackUtils.types";
+import { ITrackRegionAtom } from "../trackUtils.types";
 import { isNumber } from "./helpers";
 
 interface IGenLoopRegionResponse<State extends object> {
@@ -18,7 +18,7 @@ export const clampToBoomerang = (length: number) => (current: number) => {
 
 export const genLoopRegion = <State extends object>(
   region: Pick<
-    IValidatedTrackRegionAtom<State>,
+    Required<ITrackRegionAtom<State>>,
     "loop" | "duration" | "end" | "start"
   >,
   stateGetter: (current: number) => State,
