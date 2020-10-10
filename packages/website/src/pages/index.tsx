@@ -1,6 +1,6 @@
 import React from "react";
 /** @jsx jsx */
-import { jsx, Container, Box, Flex, Text } from "theme-ui";
+import { jsx, Container, Flex, Text } from "theme-ui";
 import Layout from "../components/Layout";
 import AnimationCard from "../components/AnimationCard";
 import LinkButton from "../components/LinkButton";

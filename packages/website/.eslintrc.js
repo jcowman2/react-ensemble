@@ -24,7 +24,8 @@ module.exports = {
     "node_modules/",
     ".cache/",
     "src/**/lib/",
-    "public"
+    "public",
+    "src/**/*.d.ts"
   ],
   rules: {
     "@typescript-eslint/interface-name-prefix": 0, // Disable "I" prefix for interfaces enforcement

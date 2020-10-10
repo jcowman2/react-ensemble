@@ -26,11 +26,11 @@ const Playground: React.FC<PlaygroundProps> = props => {
 
   React.useEffect(() => {
     let codeWithMacros = code;
-    for (let [macro, value] of MACROS) {
+    for (const [macro, value] of MACROS) {
       codeWithMacros = codeWithMacros.replaceAll(macro, value);
     }
     setFormattedCode(codeWithMacros);
-  }, [code, MACROS]);
+  }, [code]);
 
   return (
     <LiveProvider
