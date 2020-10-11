@@ -8,13 +8,16 @@ export interface CodeBlockProps {
   className: string;
   live?: boolean;
   children: string;
+  startHidden?: boolean;
 }
 
 const CodeBlock: React.FC<CodeBlockProps> = props => {
-  if (props.live) {
-    return <Playground code={props.children.trim()} />;
+  const { className, live, children, startHidden = false } = props;
+
+  if (live) {
+    return <Playground code={children.trim()} startHidden={startHidden} />;
   }
-  return <Prism className={props.className}>{props.children.trim()}</Prism>;
+  return <Prism className={className}>{children.trim()}</Prism>;
 };
 
 export default CodeBlock;

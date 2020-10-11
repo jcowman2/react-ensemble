@@ -3,3 +3,4 @@ node_modules
 .docz
 public
 .DS_Store
+UNTRACKED_*

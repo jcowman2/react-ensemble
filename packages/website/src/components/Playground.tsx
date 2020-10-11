@@ -4,10 +4,11 @@ import { jsx, Container, Button, Text } from "theme-ui";
 import theme from "../gatsby-plugin-theme-ui/index";
 import prismTheme from "../theme/prism-react-renderer";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-import { Controller, Timeline } from "react-ensemble";
+import { Controller, Timeline, Lib } from "react-ensemble";
 
 export interface PlaygroundProps {
   code: string;
+  startHidden: boolean;
 }
 
 const DEFAULT_COLOR = "black";
@@ -19,9 +20,9 @@ const MACROS = [
 ] as const;
 
 const Playground: React.FC<PlaygroundProps> = props => {
-  const { code } = props;
+  const { code, startHidden } = props;
 
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(!startHidden);
   const [formattedCode, setFormattedCode] = React.useState("");
 
   React.useEffect(() => {
@@ -35,7 +36,7 @@ const Playground: React.FC<PlaygroundProps> = props => {
   return (
     <LiveProvider
       code={formattedCode}
-      scope={{ Controller, Timeline }}
+      scope={{ Controller, Timeline, Lib }}
       theme={prismTheme}
     >
       <LiveError />
