@@ -1,4 +1,8 @@
-import { ITrackRegionAtom, ICalculatedTrackRegion } from "../trackUtils.types";
+import {
+  ITrackRegionAtom,
+  ICalculatedTrackRegion,
+  TrackRegionContext
+} from "../trackUtils.types";
 import { newId, clampString, isNumber } from "./helpers";
 
 export const genPadRegion = <S extends object>(
@@ -21,12 +25,12 @@ export const getRegionSummary = <State extends object>(
 
 export const findRegionBoundsAndPad = <State extends object>(
   region: ITrackRegionAtom<State>,
-  index: number,
+  regionContext: TrackRegionContext,
   currentTime: number,
   currentState: State,
-  layerName: string,
   track: ITrackRegionAtom<State>[]
 ) => {
+  const { layerName, index, throwErr } = regionContext;
   const startDefined = isNumber(region.start);
   const durationDefined = isNumber(region.duration);
   const endDefined = isNumber(region.end);
@@ -38,26 +42,18 @@ export const findRegionBoundsAndPad = <State extends object>(
   let padRegion: ICalculatedTrackRegion<State> | undefined = undefined;
 
   if (!(startDefined || durationDefined || endDefined)) {
-    throw new Error(
-      `Each region must have at least its start, duration, or end defined. The region ${getRegionSummary(
-        region
-      )} is missing all three.`
+    throwErr(
+      "Each region must have at least its start, duration, or end defined."
     );
   }
 
   if (region.loop) {
     if (!durationDefined) {
-      throw new Error(
-        `Loop regions must have a defined duration. The region ${getRegionSummary(
-          region
-        )} does not.`
-      );
+      throwErr("Atomic loop regions must have a defined duration.");
     }
     if (endDefined) {
-      throw new Error(
-        `The loop region ${getRegionSummary(
-          region
-        )} has a top-level end property defined. To make the region loop until a given time, using the loop.until property instead.`
+      throwErr(
+        "The atomic loop region has a top-level 'end' property defined. To make the region loop until a given time, use the 'loop.until' property instead."
       );
     }
   }
@@ -66,10 +62,8 @@ export const findRegionBoundsAndPad = <State extends object>(
     start = region.start!;
 
     if (start < newTime) {
-      throw new Error(
-        `Start (${start}) for region ${getRegionSummary(
-          region
-        )} must not be less than the calculated current time (${newTime}) in layer '${layerName}'. Did you forget to specify a layer?`
+      throwErr(
+        `The region's start (${start}) must not be less than the calculated current time (${newTime}). Did you forget to specify a layer?`
       );
     }
 
@@ -82,25 +76,19 @@ export const findRegionBoundsAndPad = <State extends object>(
   }
 
   if (endDefined && region.end! < newTime) {
-    throw new Error(
-      `End (${region.end}) for region ${getRegionSummary(
-        region
-      )} must not be less than the calculated current time (${newTime}).`
+    throwErr(
+      `The region's end (${region.end}) must not be less than the calculated current time (${newTime}).`
     );
   }
 
   if (durationDefined) {
     if (region.duration! < 0) {
-      throw new Error(
-        `Duration must not be negative for region ${getRegionSummary(region)}.`
-      );
+      throwErr("Duration must not be negative.");
     }
     duration = region.duration!;
     if (endDefined && region.end! !== duration) {
-      throw new Error(
-        `End (${region.end}) for region ${getRegionSummary(
-          region
-        )} must match the calculated duration (${duration}) plus the calculated current time (${newTime}).`
+      throwErr(
+        `The region's end (${region.end}) must match the calculated duration (${duration}) plus the calculated current time (${newTime}).`
       );
     }
     end = start + duration;
@@ -109,18 +97,12 @@ export const findRegionBoundsAndPad = <State extends object>(
       end = region.end!;
     } else {
       if (index + 1 === track.length) {
-        throw new Error(
-          `The last region must have a duration or end defined. Check region ${getRegionSummary(
-            region
-          )}.`
-        );
+        throwErr("The last region must have a duration or an end defined.");
       }
       const next = track[index + 1];
       if (next.start === undefined) {
-        throw new Error(
-          `If omitting a region's duration and end, the next region must have a start defined. Check region ${getRegionSummary(
-            region
-          )}.`
+        throwErr(
+          "If a region does not have a duration or an end, the next region must have its start defined."
         );
       }
       end = next.start!;

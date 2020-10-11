@@ -20,7 +20,7 @@ export const parseAtom = <State extends object>(
   track: ITrackRegion<State>[],
   config: Required<ITrackConfig<State>>
 ) => {
-  const { layerName, index, throwErr } = regionContext;
+  const { layerName, throwErr } = regionContext;
 
   for (const field of FORBIDDEN_FIELDS) {
     if (region[field] !== undefined) {
@@ -30,10 +30,9 @@ export const parseAtom = <State extends object>(
 
   const boundResult = findRegionBoundsAndPad(
     region,
-    index,
+    regionContext,
     currentTime,
     workingState,
-    layerName,
     track
   );
 
