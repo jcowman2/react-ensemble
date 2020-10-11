@@ -1,6 +1,6 @@
 import { gen } from "./gen";
 import { inspect } from "util";
-import { ITrackRegion } from "../trackUtils.types";
+import { ILoopConfig, ITrackRegion } from "../trackUtils.types";
 import { Lib } from "../../..";
 
 const easeLinear = Lib.d3Ease.easeLinear;
@@ -501,6 +501,32 @@ describe("TrackUtils.gen()", () => {
       y: 0
     };
 
+    const sampleGroupTrack2 = (loop: ILoopConfig | boolean): ITrackRegion[] => [
+      {
+        layer: "1",
+        duration: 1000,
+        state: { x: { to: 10 } }
+      },
+      {
+        layer: "0",
+        regions: [
+          {
+            duration: 500,
+            state: { y: { to: 10 } }
+          },
+          {
+            duration: 500,
+            state: { y: { to: 0 } }
+          }
+        ],
+        loop
+      }
+    ];
+    const sampleGroupDefaults2 = {
+      x: 0,
+      y: 0
+    };
+
     test("result#length is correct for group", () => {
       const animation = gen(sampleGroupTrack1, sampleGroupDefaults1);
       expect(animation.length).toEqual(1000);
@@ -553,6 +579,54 @@ describe("TrackUtils.gen()", () => {
       });
       expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
       expect(getFrameState(1250)).toEqual({ x: 7.5, y: 5 });
+    });
+
+    test("result#length is correct for group with a (passive) loop", () => {
+      const { length } = gen(sampleGroupTrack2(true), sampleMultiDefaults2);
+      expect(length).toEqual(1000);
+    });
+
+    test("result#getFrameState resolves correctly for group with a (passive) loop", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack2(true),
+        sampleGroupDefaults2,
+        { easing: easeLinear, endBehavior: "continue" }
+      );
+      expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+
+      // TODO - MUSTFIX: This will be 0 once the activeVars issue in parseGroup is fixed.
+      const expectedX = 0;
+
+      expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
+      expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(2000)).toEqual({ x: expectedX, y: 0 });
+    });
+
+    test("result#length is correct for group with a (active, count) loop", () => {
+      const { length } = gen(
+        sampleGroupTrack2({ count: 2 }),
+        sampleMultiDefaults2
+      );
+      expect(length).toEqual(3000);
+    });
+
+    test("result#getFrameState resolves correctly for group with a (active, count) loop", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack2({ count: 2 }),
+        sampleGroupDefaults2,
+        { easing: easeLinear, endBehavior: "continue" }
+      );
+      expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+
+      // TODO - MUSTFIX: This will be 0 once the activeVars issue in parseGroup is fixed.
+      const expectedX = 0;
+
+      expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
+      expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(2500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(3500)).toEqual({ x: expectedX, y: 0 });
     });
 
     test("throws an error if a group includes 'state'", () => {

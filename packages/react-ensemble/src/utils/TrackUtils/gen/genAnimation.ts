@@ -72,6 +72,7 @@ export const genAnimation = <State extends object>(
         fixedPlayhead = boomerangClamp(current);
         break;
     }
+    // console.log("getFrameState", current, fixedPlayhead);
     const calculatedState = treeStateGetter(fixedPlayhead);
 
     return calculatedState;

@@ -79,3 +79,9 @@ export interface IAnimation<State extends object> {
   getFrameState(frame: number): State;
   layers: Record<string, ICalculatedTrackRegion<State>[]>;
 }
+
+export interface TrackRegionContext {
+  layerName: string;
+  index: number;
+  throwErr: (error: string) => never;
+}

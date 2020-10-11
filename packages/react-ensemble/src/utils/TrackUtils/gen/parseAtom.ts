@@ -2,30 +2,29 @@ import {
   ICalculatedTrackRegion,
   ITrackConfig,
   ITrackRegion,
-  ITrackRegionAtom
+  ITrackRegionAtom,
+  TrackRegionContext
 } from "../trackUtils.types";
 import { newId } from "./helpers";
-import { genLoopRegion } from "./loop";
+import { parseLoopRegionInLayer } from "./loop";
 import { findRegionBoundsAndPad } from "./pad";
 import { createDeltaState, buildAtomicStateInterpolator } from "./stateUtils";
-import { errorThrower } from "./validation";
 
 const FORBIDDEN_FIELDS = ["regions", "useRelativeTime"];
 
 export const parseAtom = <State extends object>(
   region: ITrackRegionAtom,
-  index: number,
+  regionContext: TrackRegionContext,
   currentTime: number,
   workingState: State,
-  layerName: string,
   track: ITrackRegion<State>[],
   config: Required<ITrackConfig<State>>
 ) => {
-  const err = errorThrower(layerName, index);
+  const { layerName, index, throwErr } = regionContext;
 
   for (const field of FORBIDDEN_FIELDS) {
     if (region[field] !== undefined) {
-      err(`An atom may not contain the '${field}' property.`);
+      throwErr(`An atom may not contain the '${field}' property.`);
     }
   }
 
@@ -78,25 +77,19 @@ export const parseAtom = <State extends object>(
   > = { get: stateGetter };
 
   if (providedLoop) {
-    let nextRegionStart: number | undefined;
-    const atEnd = index === track.length - 1;
-
-    if (!atEnd) {
-      nextRegionStart = track[index + 1].start;
-      if (!nextRegionStart || nextRegionStart < end) {
-        throw new Error(
-          `If a passive loop region takes place before the last region of a track, the following region must have its start property defined`
-        ); // TODO describe better
-      }
-    }
-
-    const { loopGetter, newDuration, newEnd, isPassive } = genLoopRegion(
+    const {
+      loopGetter,
+      newDuration,
+      newEnd,
+      endsWithPassiveLoop
+    } = parseLoopRegionInLayer(
       partialRegion,
-      stateGetter,
-      nextRegionStart
+      regionContext,
+      track,
+      stateGetter
     );
 
-    if (atEnd && isPassive) {
+    if (endsWithPassiveLoop) {
       determinedEndsWithPassiveLoop = true;
     } else {
       willUpdateToTime = newEnd;

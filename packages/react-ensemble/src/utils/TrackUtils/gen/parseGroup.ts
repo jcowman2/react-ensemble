@@ -2,12 +2,13 @@ import {
   ICalculatedTrackRegion,
   ITrackConfig,
   ITrackRegion,
-  ITrackRegionGroup
+  ITrackRegionGroup,
+  TrackRegionContext
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
 import { isNumber, newId } from "./helpers";
+import { parseLoopRegionInLayer } from "./loop";
 import { genPadRegion } from "./pad";
-import { errorThrower } from "./validation";
 
 const FORBIDDEN_FIELDS = ["state", "duration"];
 
@@ -17,18 +18,17 @@ export const isGroup = (region: ITrackRegion): region is ITrackRegionGroup => {
 
 export const parseGroup = <State extends object>(
   group: ITrackRegionGroup<State>,
-  index: number,
+  regionContext: TrackRegionContext,
   currentTime: number,
   workingState: State,
-  layerName: string,
   track: ITrackRegion<State>[],
   config: Required<ITrackConfig>
 ) => {
-  const err = errorThrower(layerName, index);
-
   for (const field of FORBIDDEN_FIELDS) {
     if (group[field] !== undefined) {
-      err(`A group may not contain the '${field}' property.`);
+      regionContext.throwErr(
+        `A group may not contain the '${field}' property.`
+      );
     }
   }
 
@@ -44,7 +44,7 @@ export const parseGroup = <State extends object>(
     const start = group.start!;
 
     if (group.start < currentTime) {
-      err(
+      regionContext.throwErr(
         `Group's start (${group.start}) must be greater or equal to the current time (${currentTime}).`
       );
     }
@@ -54,7 +54,7 @@ export const parseGroup = <State extends object>(
         currentTime,
         start,
         workingState,
-        layerName
+        regionContext.layerName
       );
       newRegions.push(padRegion);
       animationStart = start;
@@ -72,28 +72,66 @@ export const parseGroup = <State extends object>(
     animConfig.easing = group.easing;
   }
 
-  const animation = genAnimation(regions, workingState, animConfig, layerName);
+  const animation = genAnimation(
+    regions,
+    workingState,
+    animConfig,
+    regionContext.layerName
+  );
   const animationEnd = isNumber(group.end)
     ? group.end
     : animation.length + animationStart;
 
-  // TODO - Check for loop prop
   const stateGetter = (current: number) => {
     const relativeTime = current - animationStart;
     return animation.getFrameState(relativeTime);
   };
+
+  let determinedEndsWithPassiveLoop = false;
+  let willUpdateToTime = animationEnd;
+
   const allVars = new Set(Object.keys(workingState)) as Set<keyof State>;
   const animationRegion: ICalculatedTrackRegion = {
     id: newId("group"),
     start: animationStart,
     end: animationEnd,
-    layer: layerName,
+    layer: regionContext.layerName,
     get: stateGetter,
     activeVars: allVars // TODO - Check for activeVars in animation
   };
 
-  newRegions.push(animationRegion);
-  const newWorkingState = stateGetter(animationEnd);
+  if (group.loop) {
+    const duration = animationEnd - animationStart;
+    const { loopGetter, newEnd, endsWithPassiveLoop } = parseLoopRegionInLayer(
+      {
+        loop: group.loop,
+        duration,
+        start: animationStart,
+        end: animationEnd
+      },
+      regionContext,
+      track,
+      stateGetter
+    );
 
-  return { newRegions, animationEnd, newWorkingState };
+    if (endsWithPassiveLoop) {
+      determinedEndsWithPassiveLoop = true;
+    } else {
+      willUpdateToTime = newEnd;
+    }
+
+    animationRegion.get = loopGetter;
+    animationRegion.end = newEnd;
+  }
+
+  newRegions.push(animationRegion);
+  const newWorkingState = animationRegion.get(animationRegion.end);
+
+  return {
+    newRegions,
+    animationEnd,
+    newWorkingState,
+    willUpdateToTime,
+    determinedEndsWithPassiveLoop
+  };
 };
