@@ -16,7 +16,7 @@ export interface ITrackRegionAtom<State extends object = any>
 export interface ITrackRegionGroup<State extends object = any>
   extends ITrackRegionBase {
   regions: ITrackRegion<State>[];
-  useRelativeTime?: boolean;
+  relativeTime?: boolean;
 }
 
 export type ITrackRegion<State extends object = any> =

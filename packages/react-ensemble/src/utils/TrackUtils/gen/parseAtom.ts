@@ -10,7 +10,7 @@ import { parseLoopRegionInLayer } from "./loop";
 import { findRegionBoundsAndPad } from "./pad";
 import { createDeltaState, buildAtomicStateInterpolator } from "./stateUtils";
 
-const FORBIDDEN_FIELDS = ["regions", "useRelativeTime"];
+const FORBIDDEN_FIELDS = ["regions", "relativeTime"];
 
 export const parseAtom = <State extends object>(
   region: ITrackRegionAtom,

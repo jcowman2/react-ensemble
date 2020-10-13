@@ -17,7 +17,8 @@ export const genAnimation = <State extends object>(
   track: ITrackRegion<State>[],
   defaults: State,
   fullConfig: Required<ITrackConfig<State>>,
-  rootLayer = ""
+  rootLayer = "",
+  startOffset = 0
 ) => {
   if (!track) {
     throw new Error("Track must be defined");
@@ -35,7 +36,8 @@ export const genAnimation = <State extends object>(
       layerName,
       layers[layerName],
       defaults,
-      fullConfig
+      fullConfig,
+      startOffset
     );
     calculatedLayers[layerName] = regions;
     addRegionsToIntervalTree(tree, regions, defaults);

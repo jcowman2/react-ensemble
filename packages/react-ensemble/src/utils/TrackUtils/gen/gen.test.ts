@@ -332,13 +332,13 @@ describe("TrackUtils.gen()", () => {
     expect(getFrameState(1250)).toEqual({ x: 7.5 });
   });
 
-  test("throws an error if an atom includes 'useRelativeTime'", () => {
+  test("throws an error if an atom includes 'relativeTime'", () => {
     expect(() => {
       gen(
         [
           {
             duration: 1000,
-            useRelativeTime: true
+            relativeTime: true
           }
         ],
         { x: 0 }
@@ -655,6 +655,72 @@ describe("TrackUtils.gen()", () => {
           { x: 0 }
         );
       }).toThrowError();
+    });
+
+    const sampleGroupTrack3 = (relativeTime?: boolean): ITrackRegion[] => [
+      {
+        duration: 1000,
+        state: { x: { to: 10 } }
+      },
+      {
+        regions: [
+          {
+            start: 2000,
+            duration: 1000,
+            state: { y: { to: 10 } }
+          },
+          {
+            duration: 1000,
+            state: { y: { to: 0 } }
+          }
+        ],
+        relativeTime
+      }
+    ];
+    const sampleGroupDefaults3 = {
+      x: 0,
+      y: 0
+    };
+
+    test("result#length is correct for a delayed group with default relativeTime setting (false)", () => {
+      const { length } = gen(sampleGroupTrack3(), sampleGroupDefaults3);
+      expect(length).toEqual(4000);
+    });
+
+    test("result#length is correct for a delayed group with relativeTime = false", () => {
+      const { length } = gen(sampleGroupTrack3(false), sampleGroupDefaults3);
+      expect(length).toEqual(4000);
+    });
+
+    test("result#length is correct for a delayed group with relativeTime = true", () => {
+      const { length } = gen(sampleGroupTrack3(true), sampleGroupDefaults3);
+      expect(length).toEqual(5000);
+    });
+
+    test("result#getFrameState resolves correct state for a delayed group with default relativeTime setting (false)", () => {
+      const { getFrameState } = gen(sampleGroupTrack3(), sampleGroupDefaults3, {
+        easing: easeLinear
+      });
+      expect(getFrameState(2000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(2500)).toEqual({ x: 10, y: 5 });
+      expect(getFrameState(3000)).toEqual({ x: 10, y: 10 });
+      expect(getFrameState(4000)).toEqual({ x: 10, y: 0 });
+    });
+
+    test("result#getFrameState resolves correct state for a delayed group with relativeTime = true", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack3(true),
+        sampleGroupDefaults3,
+        {
+          easing: easeLinear
+        }
+      );
+      expect(getFrameState(2000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(2500)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(3000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(3500)).toEqual({ x: 10, y: 5 });
+      expect(getFrameState(4000)).toEqual({ x: 10, y: 10 });
+      expect(getFrameState(5000)).toEqual({ x: 10, y: 0 });
     });
   });
 });

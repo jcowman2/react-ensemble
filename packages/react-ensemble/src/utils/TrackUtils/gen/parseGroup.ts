@@ -32,10 +32,7 @@ export const parseGroup = <State extends object>(
     }
   }
 
-  const {
-    regions,
-    useRelativeTime = false // TODO - implement use relative time
-  } = group;
+  const { regions, relativeTime = false } = group;
 
   let animationStart = currentTime;
   const newRegions: ICalculatedTrackRegion[] = [];
@@ -43,9 +40,9 @@ export const parseGroup = <State extends object>(
   if (isNumber(group.start)) {
     const start = group.start!;
 
-    if (group.start < currentTime) {
+    if (start < currentTime) {
       regionContext.throwErr(
-        `Group's start (${group.start}) must be greater or equal to the current time (${currentTime}).`
+        `Group's start (${start}) must be greater or equal to the current time (${currentTime}).`
       );
     }
 
@@ -76,7 +73,8 @@ export const parseGroup = <State extends object>(
     regions,
     workingState,
     animConfig,
-    regionContext.layerName
+    regionContext.layerName,
+    relativeTime ? 0 : animationStart
   );
   const animationEnd = isNumber(group.end)
     ? group.end
