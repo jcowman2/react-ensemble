@@ -1,3 +1,7 @@
 import React from "react";
 
-export default () => <div>Page not found</div>; // TODO - Better 404 page
+export default () => (
+  <div>
+    <div>Page not found</div>
+  </div>
+); // TODO - Better 404 page

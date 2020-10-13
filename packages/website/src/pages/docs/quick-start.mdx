@@ -10,4 +10,418 @@ It's super easy to start animating with React Ensemble. This guide will explain 
 
 **Note:** Most of the examples in these docs are **interactive!** Click the button above to expand this example's code playground. You can edit it to see how the animation changes right on the page!
 
-## Prerequisites
+## Part 0: Prerequisites
+
+This tutorial assumes you have enough React experience to be comfortable creating a React application, writing function components, and using a few common React Hooks (specifically, `useState`).
+
+If that sounds like you, feel free to [skip to the next section](#part-1-setting-the-stage). Otherwise, read on!
+
+### Using React
+
+React Ensemble, as the name suggests, is a component library for React. If you're unfamiliar with React (or just need to brush up on the basics!), a good starting point is the [official React guide](https://reactjs.org/docs/hello-world.html).
+
+You don't need to be a React expert by any means to read this guide, but it may be helpful to have experience with two key React features: **function components** and **the `useState` hook**.
+
+All the examples in this guide use React function components, rather than class components. Instead of writing our React components like this:
+
+```jsx
+class MyComponent extends React.Component {
+  render() {
+    const myState = this.state;
+    // ...
+  }
+}
+```
+
+We'll be writing them as pure functions:
+
+```jsx
+const MyComponent = props => {
+  const [myState, setMyState] = React.useState(defaultValue);
+  // ...
+};
+```
+
+If you're confused by that whole `React.useState` business, don't worry!
+The `useState` function is part of the new Hooks feature in React, which lets us have state in functional components.
+
+Here's a quick breakdown of our example:
+
+- Calling `React.useState` returns a _value_ and a _setter_ for that specific piece of state.
+- `myState` is the state's current value. By default, this will equal the `defaultValue` we passed in.
+- `setMyState` is a callback function we can use when we want to update the state to a new value.
+
+For more info on the `useState` hook, check out the [React docs](https://reactjs.org/docs/hooks-state.html).
+
+### Creating a New Project
+
+You'll need a working React application to build the animation in this tutorial.
+Because all the code will be in a single file, it doesn't really matter which environment you use.
+You can try Create React App, an online playground, or your company's prod web app (not recommended).
+
+[Create React App](https://create-react-app.dev/docs/getting-started/) (CRA) is a super quick way to start a fully functional React app from the command line. To get started, run the following:
+
+```shell
+yarn create react-app my-animation
+cd my-animation
+yarn start
+```
+
+After a few minutes, you should see the CRA welcome page in your browser. Go ahead and delete the contents of `src/App.js`, and you're ready to go!
+
+## Part 1: Setting the Stage
+
+First, let's [install](/docs/installation) React Ensemble.
+
+```shell
+yarn add react-ensemble
+```
+
+**Note:** This guide uses JavaScript for clarity, but you can also follow along in [TypeScript](https://www.typescriptlang.org/). For more information, see the guide on [using Typescript with React Ensemble](/docs/guides/using-typescript).
+
+### The Container
+
+Create a new file for our animation and add the following code:
+
+```jsx
+import React from "react";
+import { Timeline, Controller, Lib, TrackUtils } from "react-ensemble";
+
+const MyAnimation = () => {
+  return (
+    <div
+      style={{
+        height: 150,
+        width: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
+      Hi!
+    </div>
+  );
+};
+
+export default MyAnimation;
+```
+
+Here's what we did:
+
+1. Imported `Timeline`, `Controller`, `Lib`, and `TrackUtils` from React Ensemble. Don't worry, we'll explain each of these as needed.
+2. Created a component that returns a [flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) div. This div will contain our animation.
+
+Running the code should render this:
+
+```jsx live startHidden
+() => {
+  return (
+    <div
+      style={{
+        height: 250,
+        width: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
+      <div>Hi!</div>
+    </div>
+  );
+};
+```
+
+### The Circle
+
+Next, we'll add the star of our show: a circle.
+
+```jsx live renderOnly
+() => {
+  return (
+    <div
+      style={{
+        height: 150,
+        width: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          borderRadius: 15,
+          width: 30,
+          height: 30,
+          backgroundColor: "__primary",
+          left: 0,
+          top: 35,
+          opacity: 1
+        }}
+      />
+    </div>
+  );
+};
+```
+
+First, replace the `<div>Hi</div>` in our component with the following div:
+
+```jsx
+<div
+  style={{
+    position: "relative",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    backgroundColor: "__primary",
+    left: 0,
+    top: 35,
+    opacity: 1
+  }}
+/>
+```
+
+Giving us our perfect circle:
+
+```jsx live startHidden
+() => {
+  return (
+    <div
+      style={{
+        height: 250,
+        width: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          borderRadius: 15,
+          width: 30,
+          height: 30,
+          backgroundColor: "__primary",
+          left: 0,
+          top: 35,
+          opacity: 1
+        }}
+      />
+    </div>
+  );
+};
+```
+
+## Part 2: Making Things Move
+
+In this part, we'll breathe some life into our animation.
+
+Start by adding the `Controller` and `Timeline` components we imported earlier into your JSX, right above the container from the last part.
+
+```jsx
+const MyAnimation = () => {
+  return (
+    <>
+      <Controller>
+        {props => <Timeline {...props} defaultState={{}} track={[]} />}
+      </Controller>
+      <div>{/* Animation Container */}</div>
+    </>
+  );
+};
+```
+
+What do these components do? Here's a quick summary:
+
+### Timeline
+
+The `Timeline` component is the core engine behind our animation.
+It takes our animation data as props (at a minimum, the animation's `track` and `defaultState`) and computes each frame in real time.
+
+**Note:** `Timeline` doesn't render anything by itself. It simply returns data that we use to draw our animation.
+
+### Controller
+
+The `Controller` is an _optional_ component that automatically configures a `Timeline` and provides some basic UI controls for your animation.
+
+You can animate using only the `Timeline` component if you want more control, but using a `Controller` is an easy way to get up and running right away.
+
+### Default State
+
+The prop `defaultState` is required by `Timeline`. It contains the starting state of your animation.
+
+Outside your component, define your animation's default state:
+
+```jsx
+const defaultAnimState = {
+  x: -250,
+  opacity: 0
+};
+```
+
+Then, pass your default state as a prop to your timeline:
+
+```jsx
+<Timeline {...props} defaultState={defaultAnimState} track={[]} />
+```
+
+### Drawing from Data
+
+Next, we need to rewrite our circle from earlier to rely on our animation state. Create a `useState` hook in the component to track your animation state.
+
+```jsx
+const MyAnimation = () => {
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+  // return ...
+};
+```
+
+Remember, the `useState` syntax means that `animState` will always refer to the current state of our animation, starting with `defaultAnimState`.
+
+Now, replace the `left` and `opacity` properties in the circle div to rely on the `x` and `opacity` properties of the animation state.
+
+```jsx
+<div
+  style={{
+    position: "relative",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    backgroundColor: "__primary",
+    left: animState.x, // Changed
+    top: 35,
+    opacity: animState.opacity // Changed
+  }}
+/>
+```
+
+If you look at the output of your app, you should see that the circle has disappeared. This means your animation is working! After all, you changed its opacity to zero and moved it 250px to the left.
+
+### The Track
+
+The final piece is the **track**, the `Timeline` prop that determines when and how our animation state changes.
+
+A track is an array of objects called **regions**.
+Each region contains a description of how certain state properties should change over a given time frame.
+
+You can describe regions using these fields:
+
+- `start`
+- `stop`
+- `duration`
+- `state`
+- `loop`
+- [and more!](/docs/api/Timeline)
+
+Lets animate our circle coming in and out of frame. Add the following code _outside_ the component:
+
+```jsx
+const track = [
+  {
+    duration: 1500,
+    state: {
+      opacity: { to: 1 },
+      x: { to: 0 }
+    }
+  },
+  {
+    duration: 1500,
+    state: {
+      opacity: { to: 0 },
+      x: { to: 250 }
+    }
+  }
+];
+```
+
+Reading our track top-to-bottom, we can see that for the first 1.5 seconds (1500 ms), the circle's opacity will change to 1 and its x-coordinate will change to 0.
+Over the next 1.5 seconds, the circle will fade back out and travel off the right side of the screen.
+
+Finally, we'll make two additions to the timeline:
+
+- Pass in the `track`.
+- Hook up the Timeline's `onUpdate` callback to set our animation state on every frame.
+
+```jsx
+<Timeline
+  {...props}
+  defaultState={defaultAnimState}
+  track={track}
+  onUpdate={({ state }) => setAnimState(state)}
+/>
+```
+
+On your live app, press play. _**It's alive!!**_
+
+```jsx live startHidden
+() => {
+  ////////
+  // Note: this block should be outside the component in your app
+  const defaultAnimState = {
+    x: -250,
+    opacity: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+  // End block (the rest should be inside your component)
+  ////////
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 250,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: 15,
+            width: 30,
+            height: 30,
+            backgroundColor: "__primary",
+            left: animState.x,
+            top: 35,
+            opacity: animState.opacity
+          }}
+        />
+      </div>
+    </>
+  );
+};
+```
+
+## Part 3: Shape Shifting
+
+## Part 4: Final Touches

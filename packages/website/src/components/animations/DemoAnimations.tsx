@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, Timeline } from "react-ensemble";
+import { Controller, Timeline, TrackUtils, Lib } from "react-ensemble";
+import { PRIMARY, SECONDARY, TERTIARY } from "../../theme/colors";
 
 interface DemoAnimationState {
   borderRadius: number;
@@ -152,6 +153,172 @@ export const DemoAnimation2: React.FC = () => {
             height: width,
             transform: `rotate(${angle}deg)`,
             backgroundColor: color
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+interface DemoAnimation3State {
+  circleMorph: number;
+  width: number;
+  color: string;
+  x: number;
+  y: number;
+  opacity: number;
+  angle: number;
+}
+
+export const DemoAnimation3: React.FC = () => {
+  const WINDOW_HEIGHT = 250;
+  const { multi } = TrackUtils;
+
+  const defaultAnimState = {
+    circleMorph: 1,
+    width: 30,
+    color: PRIMARY,
+    x: -250,
+    y: 50,
+    opacity: 0,
+    angle: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    multi<DemoAnimation3State>([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 0 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 50 }
+        },
+        easing: Lib.d3Ease.easeElastic
+      }
+    ]),
+    multi<DemoAnimation3State>([
+      [
+        {
+          start: 2500,
+          duration: 750,
+          state: {
+            y: { to: 200 }
+          },
+          easing: Lib.d3Ease.easeExpIn,
+          loop: {
+            count: 1,
+            boomerang: true
+          }
+        },
+        {
+          duration: 0,
+          state: {
+            y: { set: 50 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            angle: { to: 360 }
+          }
+        },
+        {
+          duration: 750,
+          state: {
+            angle: { to: 180 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            color: { from: TERTIARY, to: SECONDARY }
+          },
+          easing: Lib.d3Ease.easeLinear
+        },
+        {
+          duration: 750,
+          state: {
+            color: { from: TERTIARY, to: SECONDARY }
+          },
+          easing: Lib.d3Ease.easeLinear
+        }
+      ]
+    ]),
+    multi<DemoAnimation3State>([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 1 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 30 }
+        },
+        easing: Lib.d3Ease.easeElastic
+      }
+    ]),
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: WINDOW_HEIGHT,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: animState.width * animState.circleMorph * 0.5,
+            width: animState.width,
+            height: animState.width,
+            backgroundColor: animState.color,
+            left: animState.x,
+            top: animState.y - animState.width / 2,
+            opacity: animState.opacity,
+            transform: `rotate(${animState.angle}deg)`
           }}
         />
       </div>
