@@ -1,12 +1,7 @@
 import _groupBy from "lodash.groupby";
-import _sortBy from "lodash.sortby";
 // @ts-ignore
 import alphanumSort from "alphanum-sort";
-import {
-  ITrackRegion,
-  ITrackRegionAtom,
-  TrackLayerResolver
-} from "../trackUtils.types";
+import { ITrackRegion, ITrackRegionAtom } from "../trackUtils.types";
 
 const DEFAULT_LAYER = "_default";
 
@@ -51,13 +46,4 @@ export const separateLayers = <State extends object>(
   }
 
   return { layers, layerRanks };
-};
-
-export const layerResolverOverrideLast: TrackLayerResolver = (
-  stateKey,
-  layers
-) => {
-  const winner = _sortBy(layers, ["age", layer => -layer.rank])[0];
-  // console.log("winner", stateKey, winner, layers);
-  return winner.value;
 };

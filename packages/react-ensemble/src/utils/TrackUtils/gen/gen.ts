@@ -7,7 +7,7 @@ import {
   TrackLayerResolver
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
-import { layerResolverOverrideLast } from "./layers";
+import { layerResolvers } from "../layerResolvers/layerResolvers";
 
 const applyConfigDefaults = <State extends object>(
   config: ITrackConfig<State> = {}
@@ -16,7 +16,7 @@ const applyConfigDefaults = <State extends object>(
     endBehavior = "stop",
     easing = easeCubic,
     interp = interpolate,
-    resolver = layerResolverOverrideLast as TrackLayerResolver<State>
+    resolver = layerResolvers.overrideLast as TrackLayerResolver<State>
   } = config;
   return { endBehavior, easing, interp, resolver };
 };

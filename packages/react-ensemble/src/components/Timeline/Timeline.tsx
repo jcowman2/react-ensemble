@@ -4,7 +4,8 @@ import {
   TimelineEndBehavior,
   EasingFunction,
   InterpolationFunction,
-  IAnimation
+  IAnimation,
+  TrackLayerResolver
 } from "../../utils/TrackUtils/trackUtils.types";
 import { ITickEvent, IUpdateEvent, ILoadEvent } from "./timeline.types";
 import { gen } from "../../utils/TrackUtils/trackUtils";
@@ -40,6 +41,7 @@ export interface ITimelineProps<State extends object = any> {
 
   easing?: EasingFunction;
   interp?: InterpolationFunction;
+  resolver?: TrackLayerResolver<State>;
 
   onTick?: (event: ITickEvent) => void;
   onUpdate?: (event: IUpdateEvent<State>) => void;
@@ -60,6 +62,7 @@ const Timeline = <State extends object = any>(
     endBehavior: endBehaviorProp,
     easing,
     interp,
+    resolver,
     onTick = TIMELINE_DEFAULTS.onTick,
     onUpdate = TIMELINE_DEFAULTS.onUpdate,
     onEnded = TIMELINE_DEFAULTS.onEnded,
@@ -82,13 +85,23 @@ const Timeline = <State extends object = any>(
       const anim = gen(track, defaultState, {
         endBehavior: endBehaviorProp,
         easing,
-        interp
+        interp,
+        resolver
       });
       animation.current = anim;
       setHasInit(true);
       onLoad({ animation: anim });
     }
-  }, [hasInit, track, defaultState, endBehaviorProp, easing, interp, onLoad]);
+  }, [
+    hasInit,
+    track,
+    defaultState,
+    endBehaviorProp,
+    easing,
+    interp,
+    resolver,
+    onLoad
+  ]);
 
   /** Re-init animation when config changes */
   React.useEffect(() => {
