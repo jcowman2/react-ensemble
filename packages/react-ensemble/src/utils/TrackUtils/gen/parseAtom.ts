@@ -5,7 +5,7 @@ import {
   ITrackRegionAtom,
   TrackRegionContext
 } from "../trackUtils.types";
-import { newId } from "./helpers";
+import { newId } from "../helpers";
 import { parseLoopRegionInLayer } from "./loop";
 import { findRegionBoundsAndPad } from "./pad";
 import { createDeltaState, buildAtomicStateInterpolator } from "./stateUtils";

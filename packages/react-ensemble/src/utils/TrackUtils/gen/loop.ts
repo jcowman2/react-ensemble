@@ -3,7 +3,7 @@ import {
   ITrackRegionAtom,
   TrackRegionContext
 } from "../trackUtils.types";
-import { isNumber } from "./helpers";
+import { isNumber } from "../helpers";
 
 interface IGenLoopRegionResponse<State extends object> {
   loopGetter: (current: number) => State;

@@ -3,7 +3,7 @@ import {
   ITrackRegionAtom,
   RegionState
 } from "../trackUtils.types";
-import { isFunction, isInterpolatable } from "./helpers";
+import { isFunction, isInterpolatable } from "../helpers";
 
 interface IInterpolateStateResult<State> {
   progress: number;

@@ -85,3 +85,7 @@ export interface TrackRegionContext {
   index: number;
   throwErr: (error: string) => never;
 }
+
+export type TrackRegionSingleOrArray<State extends object = any> =
+  | ITrackRegion<State>
+  | ITrackRegion<State>[];

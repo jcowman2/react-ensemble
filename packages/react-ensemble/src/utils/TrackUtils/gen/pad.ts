@@ -3,7 +3,7 @@ import {
   ICalculatedTrackRegion,
   TrackRegionContext
 } from "../trackUtils.types";
-import { newId, clampString, isNumber } from "./helpers";
+import { newId, clampString, isNumber } from "../helpers";
 
 export const genPadRegion = <S extends object>(
   start: number,

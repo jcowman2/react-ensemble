@@ -8,7 +8,7 @@ import { isGroup, parseGroup } from "./parseGroup";
 import { parseAtom } from "./parseAtom";
 import { genPadRegion } from "./pad";
 import { errorThrower } from "./validation";
-import { isNumber } from "./helpers";
+import { isNumber } from "../helpers";
 
 interface IGenLayerResult<State extends object> {
   regions: ICalculatedTrackRegion<State>[];

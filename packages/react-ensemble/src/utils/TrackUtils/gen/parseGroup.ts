@@ -6,7 +6,7 @@ import {
   TrackRegionContext
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
-import { isNumber, newId } from "./helpers";
+import { isNumber, newId } from "../helpers";
 import { parseLoopRegionInLayer } from "./loop";
 import { genPadRegion } from "./pad";
 
