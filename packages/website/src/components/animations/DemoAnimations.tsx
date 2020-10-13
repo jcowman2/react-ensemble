@@ -1,5 +1,9 @@
 import React from "react";
 import { Controller, Timeline, TrackUtils, Lib } from "react-ensemble";
+import {
+  ITrackRegion,
+  TrackLayerResolver
+} from "react-ensemble/dist/types/utils/TrackUtils/trackUtils.types";
 import { PRIMARY, SECONDARY, TERTIARY } from "../../theme/colors";
 
 interface DemoAnimationState {
@@ -321,6 +325,133 @@ export const DemoAnimation3: React.FC = () => {
             transform: `rotate(${animState.angle}deg)`
           }}
         />
+      </div>
+    </>
+  );
+};
+
+interface DemoAnimation3State {
+  width1: number;
+  width2: number;
+  morph1: number;
+  morph2: number;
+}
+
+export const DemoAnimation4: React.FC = () => {
+  const { multi, layerResolvers } = TrackUtils;
+  const { d3Ease } = Lib;
+
+  const defaultState = { width1: 30, width2: 30, morph1: 1, morph2: 1 };
+  const track = [
+    { duration: 1000 },
+    multi<DemoAnimation3State>([
+      multi<DemoAnimation3State>([
+        {
+          duration: 100,
+          state: {
+            morph1: { to: 0 }
+          }
+        },
+        {
+          duration: 1000,
+          state: {
+            width1: { to: 50 }
+          }
+        }
+      ]),
+      multi<DemoAnimation3State>([
+        {
+          duration: 100,
+          state: {
+            morph2: { to: 0 }
+          }
+        },
+        {
+          duration: 1000,
+          state: {
+            width2: { to: 50 }
+          },
+          easing: d3Ease.easeElastic
+        }
+      ])
+    ])
+  ];
+
+  const layerResolver: TrackLayerResolver = (stateKey, layers) => {
+    const layerPrefix =
+      stateKey === "width1" || stateKey === "morph1"
+        ? "_default.0"
+        : "_default.1";
+    const groupLayers = layers.filter(layer =>
+      layer.name.startsWith(layerPrefix)
+    );
+    return layerResolvers.overrideLast(
+      stateKey,
+      groupLayers.length ? groupLayers : layers
+    );
+  };
+
+  const [animState, setAnimState] = React.useState(defaultState);
+
+  return (
+    <>
+      <Controller trigger="auto" visible={false}>
+        {props => (
+          <Timeline
+            {...props}
+            endBehavior="loop"
+            defaultState={defaultState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+            resolver={layerResolver}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 150,
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-evenly",
+          alignItems: "center"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              borderRadius: animState.width1 * animState.morph1 * 0.5,
+              width: animState.width1,
+              height: animState.width1,
+              backgroundColor: PRIMARY
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              borderRadius: animState.width2 * animState.morph2 * 0.5,
+              width: animState.width2,
+              height: animState.width2,
+              backgroundColor: PRIMARY
+            }}
+          />
+        </div>
       </div>
     </>
   );

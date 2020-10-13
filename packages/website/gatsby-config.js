@@ -3,6 +3,32 @@ const remarkSlug = require("remark-slug");
 module.exports = {
   plugins: [
     "gatsby-plugin-theme-ui",
+    "gatsby-plugin-sharp",
+    {
+      resolve: "gatsby-remark-images",
+      options: {
+        backgroundColor: "transparent"
+      }
+    },
+
+    {
+      resolve: "gatsby-plugin-mdx",
+      options: {
+        defaultLayouts: {
+          // default: require.resolve("./src/components/layouts/Layout.tsx"),
+          docs: require.resolve("./src/components/DocsLayout.tsx")
+        },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: "gatsby-remark-images",
+            options: {
+              maxWidth: 1200
+            }
+          }
+        ],
+        remarkPlugins: [remarkSlug]
+      }
+    },
     {
       resolve: "gatsby-source-filesystem",
       options: {
@@ -11,13 +37,10 @@ module.exports = {
       }
     },
     {
-      resolve: "gatsby-plugin-mdx",
+      resolve: "gatsby-source-filesystem",
       options: {
-        defaultLayouts: {
-          // default: require.resolve("./src/components/layouts/Layout.tsx"),
-          docs: require.resolve("./src/components/DocsLayout.tsx")
-        },
-        remarkPlugins: [remarkSlug]
+        name: "images",
+        path: `${__dirname}/src/content/images`
       }
     },
     {

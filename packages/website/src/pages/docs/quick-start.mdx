@@ -235,7 +235,7 @@ What do these components do? Here's a quick summary:
 
 ### Timeline
 
-The `Timeline` component is the core engine behind our animation.
+The `Timeline` component is the engine behind our animation.
 It takes our animation data as props (at a minimum, the animation's `track` and `defaultState`) and computes each frame in real time.
 
 **Note:** `Timeline` doesn't render anything by itself. It simply returns data that we use to draw our animation.
@@ -423,5 +423,376 @@ On your live app, press play. _**It's alive!!**_
 ```
 
 ## Part 3: Shape Shifting
+
+In this part, we'll create the next section of our animation by using two utility modules exported by React Ensemble: `TrackUtils` and `Lib`.
+
+First, add the following code _outside_ your component, right after the imports:
+
+```jsx
+const { multi } = TrackUtils;
+const { d3Ease } = Lib;
+```
+
+### TrackUtils.multi
+
+`TrackUtils` contains utility functions related to manipulating and parsing animation tracks.
+
+The largest of these functions is `TrackUtils.gen`, which parses a track into a queryable animation object.
+`Timeline` uses this function under the hood, but you can also import it yourself. For more information, see the [TrackUtils.gen docs](/api/docs/TrackUtils#gen).
+
+For this example, we'll be using `TrackUtils.multi`. Add the following code to your track, right after the first region:
+
+```jsx
+// First region goes here (circle in)
+multi([
+  {
+    duration: 100,
+    state: {
+      circleMorph: { to: 0 } // Will morph the circle into a square
+    }
+  },
+  {
+    duration: 1000,
+    state: {
+      width: { to: 50 }
+    }
+  }
+]),
+// Last region goes here (circle out)
+```
+
+Also, you'll need to update the default state and circle div to use these new fields:
+
+```jsx
+// Outside your component:
+const defaultAnimState = {
+  circleMorph: 1, // New
+  width: 30, // New
+  x: -250,
+  opacity: 0
+};
+
+// In the circle div:
+<div
+  style={{
+    position: "relative",
+    borderRadius: animState.width * animState.circleMorph * 0.5, // Changed
+    width: animState.width, // Changed
+    height: animState.width, // Changed
+    backgroundColor: "__primary",
+    left: animState.x,
+    top: 35,
+    opacity: animState.opacity
+  }}
+/>;
+```
+
+React Ensemble executes regions _sequentially_, meaning one region won't start until the one before it has finished.
+If we were to configure a region to start when another region was still running, `TrackUtils.gen` would throw an error.
+
+![Track Diagram](../../content/images/track-diagram.drawio.png)
+
+So what about if we want to have two regions overlap?
+For instance, here the circle should morph into a square over 0.1 seconds and increase its width to 50 over 1 second.
+We want both of these regions to start at the same time.
+
+For executing regions _concurrently_, React Ensemble offers the concept of **track layers**.
+A layer is essentially a sub-track for regions to be placed in so they can run at the same time as other sub-tracks (layers).
+
+![Layer Diagram](../../content/images/layer-multi-diagram.drawio.png)
+
+Layers are executed independently of one another. Therefore, if two regions are put on separate layers, they will run at the same time.
+
+Our call to `TrackUtils.multi` does just that: it puts the first region into one layer and the second region into another.
+When we run the code, both regions execute at the same time!
+
+```jsx live startHidden
+() => {
+  ////////
+  // Note: this block should be outside the component in your app
+  const { multi } = TrackUtils;
+  const { d3Ease } = Lib;
+
+  const defaultAnimState = {
+    circleMorph: 1,
+    width: 30,
+    x: -250,
+    opacity: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    multi([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 0 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 50 }
+        }
+      }
+    ]),
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+  // End block (the rest should be inside your component)
+  ////////
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 250,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: animState.width * animState.circleMorph * 0.5, // Changed
+            width: animState.width,
+            height: animState.width,
+            backgroundColor: "__primary",
+            left: animState.x,
+            top: 35,
+            opacity: animState.opacity
+          }}
+        />
+      </div>
+    </>
+  );
+};
+```
+
+**Note:** `TrackUtils.multi` is just nice syntax.
+You can use all the features of layering by configuring the right properties on your track regions.
+All `multi` does is add them for you.
+
+For example, our `multi` region is equivalent to this region:
+
+```jsx
+// This is just an example!
+// You don't need to paste it into your animation.
+{
+  regions: [
+    {
+      layer: "0",
+      duration: 100,
+      state: {
+        circleMorph: { to: 0 }
+      }
+    },
+    {
+      layer: "1",
+      duration: 1000,
+      state: {
+        width: { to: 50 }
+      }
+    }
+  ];
+}
+```
+
+For more information on layers, see the [Layers and Groups guide](/docs/layers-and-groups).
+
+### Easing with Lib.d3Ease
+
+You may have noticed that our shape-shift animation doesn't quite match up with the example at the start of this guide.
+
+import EaseCompare from "../../content/examples/ease-compare.mdx";
+
+<EaseCompare />
+
+Our square doesn't "spring" outward like the goal animation does. This is because our region's **easing function** is different.
+
+Usually, we do not want time to be exactly linear in our animations.
+An element that slides in at a constant speed is much less exciting than one that bounces, springs, or boomerangs in.
+We can control this effect with an _easing function_.
+
+Add the following line to the multi-region:
+
+```jsx
+multi([
+  {
+    duration: 100,
+    state: {
+      circleMorph: { to: 0 }
+    }
+  },
+  {
+    duration: 1000,
+    state: {
+      width: { to: 50 }
+    },
+    easing: d3Ease.easeElastic // New line!
+  }
+]),
+```
+
+The `easing` property on a track region sets its time curve.
+Here, we are using the `easeElastic` function provided by the package [**d3-ease**](https://github.com/d3/d3-ease).
+This easing function will give our shape shift an elastic feel.
+
+[**d3-ease**](https://github.com/d3/d3-ease) includes a number of interesting easing functions.
+For convenience, React Ensemble exports this package at `Lib.d3Ease`.
+Check out the [Easing and Interpolating guide](/docs/guides/easing-and-interpolating) for more information.
+
+### Shifting Back
+
+To make the square shift back into a circle, add another multi-region just after the first one:
+
+```jsx
+multi([
+  {
+    duration: 100,
+    state: {
+      circleMorph: { to: 1 }
+    }
+  },
+  {
+    duration: 1000,
+    state: {
+      width: { to: 30 }
+    },
+    easing: d3Ease.easeElastic
+  }
+]),
+```
+
+At this point, the animation should look like this:
+
+```jsx live startHidden
+() => {
+  ////////
+  // Note: this block should be outside the component in your app
+  const { multi } = TrackUtils;
+  const { d3Ease } = Lib;
+
+  const defaultAnimState = {
+    circleMorph: 1,
+    width: 30,
+    x: -250,
+    opacity: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    multi([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 0 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 50 }
+        },
+        easing: d3Ease.easeElastic
+      }
+    ]),
+    multi([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 1 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 30 }
+        },
+        easing: d3Ease.easeElastic
+      }
+    ]),
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+  // End block (the rest should be inside your component)
+  ////////
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 250,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: animState.width * animState.circleMorph * 0.5,
+            width: animState.width,
+            height: animState.width,
+            backgroundColor: "__primary",
+            left: animState.x,
+            top: 35,
+            opacity: animState.opacity
+          }}
+        />
+      </div>
+    </>
+  );
+};
+```
 
 ## Part 4: Final Touches

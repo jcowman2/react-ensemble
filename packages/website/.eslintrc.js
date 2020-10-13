@@ -20,7 +20,7 @@ module.exports = {
     "plugin:prettier/recommended"
   ],
   ignorePatterns: [
-    "*.config.js",
+    "*config.js",
     "node_modules/",
     ".cache/",
     "src/**/lib/",
