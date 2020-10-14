@@ -1,0 +1,162 @@
+```jsx live startHidden
+() => {
+  ////////
+  // Note: this block should be outside the component in your app
+  const WINDOW_HEIGHT = 250;
+  const { multi } = TrackUtils;
+  const { d3Ease } = Lib;
+
+  const defaultAnimState = {
+    circleMorph: 1,
+    width: 30,
+    color: "__primary",
+    x: -250,
+    y: 50,
+    opacity: 0,
+    angle: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    multi([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 0 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 50 }
+        },
+        easing: d3Ease.easeElastic
+      }
+    ]),
+    multi([
+      [
+        {
+          start: 2500,
+          duration: 750,
+          state: {
+            y: { to: 200 }
+          },
+          easing: d3Ease.easeExpIn,
+          loop: {
+            count: 1,
+            boomerang: true
+          }
+        },
+        {
+          duration: 0,
+          state: {
+            y: { set: 50 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            angle: { to: 360 }
+          }
+        },
+        {
+          duration: 750,
+          state: {
+            angle: { to: 180 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            color: { from: "__tertiary", to: "__secondary" }
+          },
+          easing: d3Ease.easeLinear
+        },
+        {
+          duration: 750,
+          state: {
+            color: { from: "__tertiary", to: "__primary" }
+          },
+          easing: d3Ease.easeLinear
+        }
+      ]
+    ]),
+    multi([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 1 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 30 }
+        },
+        easing: d3Ease.easeElastic
+      }
+    ]),
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+  // End block (the rest should be inside your component)
+  ////////
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: WINDOW_HEIGHT,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: animState.width * animState.circleMorph * 0.5,
+            width: animState.width,
+            height: animState.width,
+            backgroundColor: animState.color,
+            left: animState.x,
+            top: animState.y - animState.width / 2,
+            opacity: animState.opacity,
+            transform: `rotate(${animState.angle}deg)`
+          }}
+        />
+      </div>
+    </>
+  );
+};
+```

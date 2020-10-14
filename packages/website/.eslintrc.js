@@ -20,11 +20,12 @@ module.exports = {
     "plugin:prettier/recommended"
   ],
   ignorePatterns: [
-    "*.config.js",
+    "*config.js",
     "node_modules/",
     ".cache/",
-    ".docz/",
-    "public"
+    "src/**/lib/",
+    "public",
+    "src/**/*.d.ts"
   ],
   rules: {
     "@typescript-eslint/interface-name-prefix": 0, // Disable "I" prefix for interfaces enforcement
@@ -33,6 +34,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
     "react/prop-types": [0], // Don't require prop type validation since we're using typescript
+    "react/display-name": 0,
     "prettier/prettier": [
       "error",
       { arrowParens: "avoid", trailingComma: "none" }

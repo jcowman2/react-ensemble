@@ -40,8 +40,8 @@ const makeLinkWrapper: (location: {
 
 const SideNav: React.FC = props => {
   return (
-    <Location
-      children={({ location }) => (
+    <Location>
+      {({ location }) => (
         <Links
           {...props}
           components={{
@@ -51,7 +51,7 @@ const SideNav: React.FC = props => {
           sx={{ mr: 5, pt: 2 }}
         />
       )}
-    />
+    </Location>
   );
 };
 

@@ -1,8 +1,43 @@
 const remarkSlug = require("remark-slug");
 
 module.exports = {
+  siteMetadata: {
+    title: "React Ensemble",
+    titleTemplate: "%s | React Ensemble",
+    description:
+      "Intuitive and precise control for complex animations in React.",
+    url: "https://www.react-ensemble.dev",
+    image: "/images/react-ensemble-animation-library-logo.jpg"
+  },
   plugins: [
     "gatsby-plugin-theme-ui",
+    "gatsby-plugin-sharp",
+    "gatsby-plugin-react-helmet",
+    {
+      resolve: "gatsby-remark-images",
+      options: {
+        backgroundColor: "transparent"
+      }
+    },
+
+    {
+      resolve: "gatsby-plugin-mdx",
+      options: {
+        defaultLayouts: {
+          // default: require.resolve("./src/components/layouts/Layout.tsx"),
+          docs: require.resolve("./src/components/DocsLayout.tsx")
+        },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: "gatsby-remark-images",
+            options: {
+              maxWidth: 1200
+            }
+          }
+        ],
+        remarkPlugins: [remarkSlug]
+      }
+    },
     {
       resolve: "gatsby-source-filesystem",
       options: {
@@ -11,13 +46,10 @@ module.exports = {
       }
     },
     {
-      resolve: "gatsby-plugin-mdx",
+      resolve: "gatsby-source-filesystem",
       options: {
-        defaultLayouts: {
-          // default: require.resolve("./src/components/layouts/Layout.tsx"),
-          docs: require.resolve("./src/components/DocsLayout.tsx")
-        },
-        remarkPlugins: [remarkSlug]
+        name: "images",
+        path: `${__dirname}/src/content/images`
       }
     },
     {

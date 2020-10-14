@@ -1,5 +1,9 @@
-import { ICalculatedTrackRegion } from "../trackUtils.types";
-import { isNumber } from "./helpers";
+import {
+  ITrackRegion,
+  ITrackRegionAtom,
+  TrackRegionContext
+} from "../trackUtils.types";
+import { isNumber } from "../helpers";
 
 interface IGenLoopRegionResponse<State extends object> {
   loopGetter: (current: number) => State;
@@ -7,6 +11,11 @@ interface IGenLoopRegionResponse<State extends object> {
   newEnd: number;
   isPassive: boolean;
 }
+
+type LoopRegionRequiredInfo<State extends object> = Pick<
+  Required<ITrackRegionAtom<State>>,
+  "loop" | "duration" | "end" | "start"
+>;
 
 export const clampToLoop = (length: number) => (current: number) =>
   length ? current % length : 0;
@@ -16,11 +25,9 @@ export const clampToBoomerang = (length: number) => (current: number) => {
   return modCurrent <= length / 2 ? modCurrent : length - modCurrent;
 };
 
-export const genLoopRegion = <State extends object>(
-  region: Pick<
-    ICalculatedTrackRegion<State>,
-    "loop" | "duration" | "end" | "start"
-  >,
+const genLoopRegion = <State extends object>(
+  region: LoopRegionRequiredInfo<State>,
+  regionContext: TrackRegionContext,
   stateGetter: (current: number) => State,
   nextRegionStart?: number
 ): IGenLoopRegionResponse<State> => {
@@ -52,7 +59,7 @@ export const genLoopRegion = <State extends object>(
 
     if (numDefined !== 1) {
       if (numDefined !== 0) {
-        throw new Error(
+        regionContext.throwErr(
           "A loop region may have one or zero of these loop config fields, but no more: [count, until, duration]."
         );
       }
@@ -84,8 +91,36 @@ export const genLoopRegion = <State extends object>(
     : clampToLoop(givenDuration);
 
   const loopGetter = (current: number) => {
-    return stateGetter(clamp(current - start) + start);
+    const fixedPlayhead = clamp(current - start) + start;
+    // console.log("loopGetter", current, fixedPlayhead);
+    return stateGetter(fixedPlayhead);
   };
 
   return { loopGetter, newDuration, newEnd, isPassive };
+};
+
+export const parseLoopRegionInLayer = <State extends object>(
+  region: LoopRegionRequiredInfo<State>,
+  regionContext: TrackRegionContext,
+  track: ITrackRegion<State>[],
+  stateGetter: (current: number) => State
+) => {
+  const { index } = regionContext;
+  let nextRegionStart: number;
+  const atEnd = index === track.length - 1;
+
+  if (!atEnd) {
+    nextRegionStart = track[index + 1].start;
+  }
+
+  const loopRegionData = genLoopRegion(
+    region,
+    regionContext,
+    stateGetter,
+    nextRegionStart
+  );
+
+  const endsWithPassiveLoop = loopRegionData.isPassive && atEnd;
+
+  return { ...loopRegionData, endsWithPassiveLoop };
 };

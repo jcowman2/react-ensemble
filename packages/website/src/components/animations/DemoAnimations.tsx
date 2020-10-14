@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, Timeline } from "react-ensemble";
+import { Controller, Timeline, TrackUtils, Lib } from "react-ensemble";
+import { PRIMARY, SECONDARY, TERTIARY } from "../../theme/colors";
 
 interface DemoAnimationState {
   borderRadius: number;
@@ -154,6 +155,284 @@ export const DemoAnimation2: React.FC = () => {
             backgroundColor: color
           }}
         />
+      </div>
+    </>
+  );
+};
+
+interface DemoAnimation3State {
+  circleMorph: number;
+  width: number;
+  color: string;
+  x: number;
+  y: number;
+  opacity: number;
+  angle: number;
+}
+
+export const DemoAnimation3: React.FC = () => {
+  const WINDOW_HEIGHT = 250;
+  const { multi } = TrackUtils;
+
+  const defaultAnimState = {
+    circleMorph: 1,
+    width: 30,
+    color: PRIMARY,
+    x: -250,
+    y: 50,
+    opacity: 0,
+    angle: 0
+  };
+
+  const track = [
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 1 },
+        x: { to: 0 }
+      }
+    },
+    multi<DemoAnimation3State>([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 0 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 50 }
+        },
+        easing: Lib.d3Ease.easeElastic
+      }
+    ]),
+    multi<DemoAnimation3State>([
+      [
+        {
+          start: 2500,
+          duration: 750,
+          state: {
+            y: { to: 200 }
+          },
+          easing: Lib.d3Ease.easeExpIn,
+          loop: {
+            count: 1,
+            boomerang: true
+          }
+        },
+        {
+          duration: 0,
+          state: {
+            y: { set: 50 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            angle: { to: 360 }
+          }
+        },
+        {
+          duration: 750,
+          state: {
+            angle: { to: 180 }
+          }
+        }
+      ],
+      [
+        {
+          start: 3250,
+          duration: 1500,
+          state: {
+            color: { from: TERTIARY, to: SECONDARY }
+          },
+          easing: Lib.d3Ease.easeLinear
+        },
+        {
+          duration: 750,
+          state: {
+            color: { from: TERTIARY, to: SECONDARY }
+          },
+          easing: Lib.d3Ease.easeLinear
+        }
+      ]
+    ]),
+    multi<DemoAnimation3State>([
+      {
+        duration: 100,
+        state: {
+          circleMorph: { to: 1 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          width: { to: 30 }
+        },
+        easing: Lib.d3Ease.easeElastic
+      }
+    ]),
+    {
+      duration: 1500,
+      state: {
+        opacity: { to: 0 },
+        x: { to: 250 }
+      }
+    }
+  ];
+
+  const [animState, setAnimState] = React.useState(defaultAnimState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultAnimState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: WINDOW_HEIGHT,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: animState.width * animState.circleMorph * 0.5,
+            width: animState.width,
+            height: animState.width,
+            backgroundColor: animState.color,
+            left: animState.x,
+            top: animState.y - animState.width / 2,
+            opacity: animState.opacity,
+            transform: `rotate(${animState.angle}deg)`
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+interface DemoAnimation3State {
+  width1: number;
+  width2: number;
+  morph1: number;
+  morph2: number;
+}
+
+export const DemoAnimation4: React.FC = () => {
+  const { multi } = TrackUtils;
+  const { d3Ease } = Lib;
+
+  const defaultState = { width1: 30, width2: 30, morph1: 1, morph2: 1 };
+  const track = [
+    { duration: 1000 },
+    multi<DemoAnimation3State>([
+      multi<DemoAnimation3State>([
+        {
+          duration: 100,
+          state: {
+            morph1: { to: 0 }
+          }
+        },
+        {
+          duration: 1000,
+          state: {
+            width1: { to: 50 }
+          }
+        }
+      ]),
+      multi<DemoAnimation3State>([
+        {
+          duration: 100,
+          state: {
+            morph2: { to: 0 }
+          }
+        },
+        {
+          duration: 1000,
+          state: {
+            width2: { to: 50 }
+          },
+          easing: d3Ease.easeElastic
+        }
+      ])
+    ])
+  ];
+
+  const [animState, setAnimState] = React.useState(defaultState);
+
+  return (
+    <>
+      <Controller trigger="auto" visible={false}>
+        {props => (
+          <Timeline
+            {...props}
+            endBehavior="loop"
+            defaultState={defaultState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 150,
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-evenly",
+          alignItems: "center"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              borderRadius: animState.width1 * animState.morph1 * 0.5,
+              width: animState.width1,
+              height: animState.width1,
+              backgroundColor: PRIMARY
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              borderRadius: animState.width2 * animState.morph2 * 0.5,
+              width: animState.width2,
+              height: animState.width2,
+              backgroundColor: PRIMARY
+            }}
+          />
+        </div>
       </div>
     </>
   );

@@ -71,7 +71,8 @@ export const makeIntervalTreeFrameStateGetter = <State extends object>(
 
 export const addRegionsToIntervalTree = <State extends object>(
   tree: IntervalTree<IIntervalTreeSegment<State>>,
-  track: ICalculatedTrackRegion<State>[]
+  track: ICalculatedTrackRegion<State>[],
+  defaults: State
 ): void => {
   if (!track.length) {
     return;
@@ -79,14 +80,14 @@ export const addRegionsToIntervalTree = <State extends object>(
 
   const stateLastChanged: Record<string, number> = {};
 
-  for (const stateKey in track[0].state) {
+  for (const stateKey in defaults) {
     stateLastChanged[stateKey] = 0;
   }
 
   track.forEach((region, index) => {
     const stateActive: Record<string, boolean> = {};
 
-    for (const stateKey in region.state) {
+    for (const stateKey in defaults) {
       if (region.activeVars.has(stateKey)) {
         stateLastChanged[stateKey] = region.start;
         stateActive[stateKey] = true;

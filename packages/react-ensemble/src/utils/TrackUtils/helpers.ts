@@ -24,3 +24,6 @@ export const isFunction = (f: unknown): f is Function =>
   f && typeof f === "function";
 
 export const isNumber = (n: unknown): n is number => typeof n === "number";
+
+export const isArray = (n: unknown): n is any[] =>
+  n && (n as any).length !== undefined;

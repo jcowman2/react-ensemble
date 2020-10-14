@@ -1,19 +1,35 @@
-export interface ITrackRegion<State extends object = any> {
+interface ITrackRegionBase {
   start?: number;
-  duration?: number;
   end?: number;
-  state?: RegionState<State>;
   easing?: EasingFunction | null;
   interp?: InterpolationFunction | null;
   layer?: string;
   loop?: ILoopConfig | boolean;
 }
 
-export interface ICalculatedTrackRegion<State extends object = any>
-  extends Required<ITrackRegion<State>> {
+export interface ITrackRegionAtom<State extends object = any>
+  extends ITrackRegionBase {
+  duration?: number;
+  state?: RegionState<State>;
+}
+
+export interface ITrackRegionGroup<State extends object = any>
+  extends ITrackRegionBase {
+  regions: ITrackRegion<State>[];
+  relativeTime?: boolean;
+}
+
+export type ITrackRegion<State extends object = any> =
+  | ITrackRegionAtom<State>
+  | ITrackRegionGroup<State>;
+
+export interface ICalculatedTrackRegion<State extends object = any> {
   id: string;
   activeVars: Set<keyof State>;
   get: (current: number) => State;
+  start: number;
+  end: number;
+  layer: string;
 }
 
 export interface ILoopConfig {
@@ -29,9 +45,7 @@ export type InterpolationFunction = <T>(
   end: T
 ) => (progress: number) => T;
 
-/** @hidden */
 export type RegionState<V> = { [K in keyof V]?: RegionStateProperty<V[K]> };
-/** @hidden */
 export type RegionStateProperty<T> = {
   from?: T;
   to?: T;
@@ -64,4 +78,15 @@ export interface IAnimation<State extends object> {
   config: Required<ITrackConfig<State>>;
   getFrameState(frame: number): State;
   layers: Record<string, ICalculatedTrackRegion<State>[]>;
+  activeVars: Set<keyof State>;
 }
+
+export interface TrackRegionContext {
+  layerName: string;
+  index: number;
+  throwErr: (error: string) => never;
+}
+
+export type TrackRegionSingleOrArray<State extends object = any> =
+  | ITrackRegion<State>
+  | ITrackRegion<State>[];

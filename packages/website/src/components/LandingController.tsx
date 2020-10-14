@@ -9,8 +9,6 @@ import { PRIMARY, TERTIARY } from "../theme/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 
-export interface LandingControllerProps {}
-
 const TRACK_LENGTH = 16000;
 
 const fadeIn = keyframes`
@@ -23,7 +21,7 @@ const fadeIn = keyframes`
   }
 `;
 
-const LandingController: React.FC<LandingControllerProps> = props => {
+const LandingController: React.FC = () => {
   const { progress, setProgress } = React.useContext(HomePageContext);
 
   const [playing, setIsPlaying] = React.useState(true);

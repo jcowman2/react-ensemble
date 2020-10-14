@@ -11,7 +11,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const heading = (Tag: any) => (props: Props & { id: string }) => {
+const heading = (Tag: React.ElementType) => (props: Props & { id: string }) => {
   if (!props.id) return <Tag {...props} />;
   return (
     <Tag {...props}>

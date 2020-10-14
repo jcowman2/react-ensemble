@@ -1,7 +1,11 @@
-import { easeLinear } from "d3-ease";
 import { gen } from "./gen";
 import { inspect } from "util";
-import { ITrackRegion } from "../trackUtils.types";
+import { ILoopConfig, ITrackRegion } from "../trackUtils.types";
+import { Lib } from "../../..";
+import { multi } from "../multi/multi";
+import { DEFAULT_LAYER } from "./layers";
+
+const easeLinear = Lib.d3Ease.easeLinear;
 
 const debugLog = (data: unknown) => console.log(inspect(data, false, null));
 
@@ -307,130 +311,484 @@ describe("TrackUtils.gen()", () => {
     expect(getFrameState(100)).toEqual(sampleDefaults1);
   });
 
-  test("result#length is the length of the longest active track, not taking a passive loop into account", () => {
-    const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
-    expect(length).toEqual(2000);
+  test("result#getFrameState resolve the correct values for a simple boomerang track", () => {
+    const { getFrameState } = gen(
+      [{ layer: "1", duration: 1000, state: { x: { to: 10 } } }],
+      { x: 0 },
+      { endBehavior: "boomerang", easing: easeLinear }
+    );
+    expect(getFrameState(1000)).toEqual({ x: 10 });
+    expect(getFrameState(1250)).toEqual({ x: 7.5 });
   });
 
-  test("result#length is the length of the longest active track, so an active loop's length is considered", () => {
-    const track = sampleMultiTrack3;
-    track[0] = {
-      ...track[0],
-      loop: {
-        count: 3, // duration 1000 x4
-        boomerang: false
-      }
-    };
-    const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
-    expect(length).toEqual(4000);
+  test("result#getFrameState resolve the correct values for a boomerang track with an underlying layer", () => {
+    const { getFrameState } = gen(
+      [
+        { layer: "1", duration: 1000, state: { x: { to: 10 } } },
+        { layer: "0", duration: 1000, state: { x: { to: 0 } } }
+      ],
+      { x: 0 },
+      { endBehavior: "boomerang", easing: easeLinear }
+    );
+    expect(getFrameState(1000)).toEqual({ x: 10 });
+    expect(getFrameState(1250)).toEqual({ x: 7.5 });
   });
 
-  test("result#length is the length of the longest active track, so an active (boomerang) loop's length is considered", () => {
-    const track = sampleMultiTrack3;
-    track[0] = {
-      ...track[0],
-      loop: {
-        count: 3,
-        boomerang: true
-      }
-    };
-    const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
-    expect(length).toEqual(8000);
+  test("throws an error if an atom includes 'relativeTime'", () => {
+    expect(() => {
+      gen(
+        [
+          {
+            duration: 1000,
+            relativeTime: true
+          }
+        ],
+        { x: 0 }
+      );
+    }).toThrowError();
   });
 
-  test("result#length is correct for a boomerang (count) loop", () => {
-    const track = [
-      {
-        state: {
-          x: { to: 1 }
-        },
+  describe("Looping", () => {
+    test("result#length is the length of the longest active track, not taking a passive loop into account", () => {
+      const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
+      expect(length).toEqual(2000);
+    });
+
+    test("result#length is the length of the longest active track, so an active loop's length is considered", () => {
+      const track = sampleMultiTrack3;
+      track[0] = {
+        ...track[0],
+        loop: {
+          count: 3, // duration 1000 x4
+          boomerang: false
+        }
+      };
+      const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
+      expect(length).toEqual(4000);
+    });
+
+    test("result#length is the length of the longest active track, so an active (boomerang) loop's length is considered", () => {
+      const track = sampleMultiTrack3;
+      track[0] = {
+        ...track[0],
         loop: {
           count: 3,
           boomerang: true
-        },
-        duration: 1000
+        }
+      };
+      const { length } = gen(sampleMultiTrack3, sampleMultiDefaults3);
+      expect(length).toEqual(8000);
+    });
+
+    test("result#length is correct for a boomerang (count) loop", () => {
+      const track = [
+        {
+          state: {
+            x: { to: 1 }
+          },
+          loop: {
+            count: 3,
+            boomerang: true
+          },
+          duration: 1000
+        }
+      ];
+
+      const { length } = gen(track, { x: 0 });
+      expect(length).toEqual(8000);
+    });
+
+    test("result#getFrameState resolves the correct values for a track with a (passive) loop", () => {
+      const track = sampleMultiTrack3;
+      track[0] = {
+        ...track[0],
+        loop: true
+      };
+
+      const { getFrameState } = gen(track, sampleMultiDefaults3, {
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0)).toEqual(sampleMultiDefaults3);
+      expect(getFrameState(500)).toEqual({
+        x: 0.5,
+        y: 0
+      });
+      expect(getFrameState(999)).toEqual({
+        x: 0.999,
+        y: 0
+      });
+      expect(getFrameState(1000)).toEqual({
+        x: 0,
+        y: 0
+      });
+      expect(getFrameState(1500)).toEqual({
+        x: 0.5,
+        y: 0.5
+      });
+      expect(getFrameState(1999)).toEqual({
+        x: 0.999,
+        y: 0.999
+      });
+      expect(getFrameState(2000)).toEqual({
+        x: 0,
+        y: 1
+      });
+    });
+
+    test("result#getFrameState resolves the correct values for a track with a (passive, boomerang) loop", () => {
+      const track = sampleMultiTrack3;
+      track[0] = {
+        ...track[0],
+        loop: {
+          boomerang: true
+        }
+      };
+
+      const { getFrameState } = gen(track, sampleMultiDefaults3, {
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0)).toEqual(sampleMultiDefaults3);
+      expect(getFrameState(500)).toEqual({
+        x: 0.5,
+        y: 0
+      });
+      expect(getFrameState(999)).toEqual({
+        x: 0.999,
+        y: 0
+      });
+      expect(getFrameState(1000)).toEqual({
+        x: 1,
+        y: 0
+      });
+      expect(getFrameState(1500)).toEqual({
+        x: 0.5,
+        y: 0.5
+      });
+      expect(getFrameState(1999)).toEqual({
+        x: 0.001,
+        y: 0.999
+      });
+      expect(getFrameState(2000)).toEqual({
+        x: 0,
+        y: 1
+      });
+    });
+  });
+
+  describe("Grouping", () => {
+    const sampleGroupTrack1: ITrackRegion[] = [
+      {
+        layer: "1",
+        duration: 1000,
+        state: { x: { to: 10 } }
+      },
+      {
+        layer: "0",
+        regions: [
+          {
+            duration: 500,
+            state: { y: { to: 10 } }
+          },
+          {
+            duration: 500,
+            state: { y: { to: 0 } }
+          }
+        ]
       }
     ];
-
-    const { length } = gen(track, { x: 0 });
-    expect(length).toEqual(8000);
-  });
-
-  test("result#getFrameState resolves the correct values for a track with a (passive) loop", () => {
-    const track = sampleMultiTrack3;
-    track[0] = {
-      ...track[0],
-      loop: true
+    const sampleGroupDefaults1 = {
+      x: 0,
+      y: 0
     };
 
-    const { getFrameState } = gen(track, sampleMultiDefaults3, {
-      easing: easeLinear
-    });
-
-    expect(getFrameState(0)).toEqual(sampleMultiDefaults3);
-    expect(getFrameState(500)).toEqual({
-      x: 0.5,
-      y: 0
-    });
-    expect(getFrameState(999)).toEqual({
-      x: 0.999,
-      y: 0
-    });
-    expect(getFrameState(1000)).toEqual({
-      x: 0,
-      y: 0
-    });
-    expect(getFrameState(1500)).toEqual({
-      x: 0.5,
-      y: 0.5
-    });
-    expect(getFrameState(1999)).toEqual({
-      x: 0.999,
-      y: 0.999
-    });
-    expect(getFrameState(2000)).toEqual({
-      x: 0,
-      y: 1
-    });
-  });
-
-  test("result#getFrameState resolves the correct values for a track with a (passive, boomerang) loop", () => {
-    const track = sampleMultiTrack3;
-    track[0] = {
-      ...track[0],
-      loop: {
-        boomerang: true
+    const sampleGroupTrack2 = (loop: ILoopConfig | boolean): ITrackRegion[] => [
+      {
+        layer: "1",
+        duration: 1000,
+        state: { x: { to: 10 } }
+      },
+      {
+        layer: "0",
+        regions: [
+          {
+            duration: 500,
+            state: { y: { to: 10 } }
+          },
+          {
+            duration: 500,
+            state: { y: { to: 0 } }
+          }
+        ],
+        loop
       }
+    ];
+    const sampleGroupDefaults2 = {
+      x: 0,
+      y: 0
     };
 
-    const { getFrameState } = gen(track, sampleMultiDefaults3, {
-      easing: easeLinear
+    test("result#length is correct for group", () => {
+      const animation = gen(sampleGroupTrack1, sampleGroupDefaults1);
+      expect(animation.length).toEqual(1000);
     });
 
-    expect(getFrameState(0)).toEqual(sampleMultiDefaults3);
-    expect(getFrameState(500)).toEqual({
-      x: 0.5,
-      y: 0
+    test("result#getFrameState resolves the correct values for a group", () => {
+      const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
+        easing: Lib.d3Ease.easeLinear
+      });
+
+      expect(getFrameState(0)).toEqual(sampleGroupDefaults1);
+      expect(getFrameState(100)).toEqual({ x: 1, y: 2 });
+      expect(getFrameState(250)).toEqual({ x: 2.5, y: 5 });
+      expect(getFrameState(500)).toEqual({ x: 5, y: 10 });
+      expect(getFrameState(750)).toEqual({ x: 7.5, y: 5 });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
     });
-    expect(getFrameState(999)).toEqual({
-      x: 0.999,
-      y: 0
+
+    test("result#getFrameState resolves 'continue' master end condition for a group correctly", () => {
+      const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
+        easing: Lib.d3Ease.easeLinear,
+        endBehavior: "continue"
+      });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(1500)).toEqual({ x: 10, y: 0 });
     });
-    expect(getFrameState(1000)).toEqual({
-      x: 1,
-      y: 0
+
+    test("result#getFrameState resolves 'stop' master end condition for a group correctly", () => {
+      const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
+        easing: Lib.d3Ease.easeLinear,
+        endBehavior: "stop"
+      });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(1500)).toEqual({ x: 10, y: 0 });
     });
-    expect(getFrameState(1500)).toEqual({
-      x: 0.5,
-      y: 0.5
+
+    test("result#getFrameState resolves 'loop' master end condition for a group correctly", () => {
+      const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
+        easing: Lib.d3Ease.easeLinear,
+        endBehavior: "loop"
+      });
+      expect(getFrameState(1000)).toEqual({ x: 0, y: 0 });
+      expect(getFrameState(1250)).toEqual({ x: 2.5, y: 5 });
     });
-    expect(getFrameState(1999)).toEqual({
-      x: 0.001,
-      y: 0.999
+
+    test("result#getFrameState resolves 'boomerang' master end condition for a group correctly", () => {
+      const { getFrameState } = gen(sampleGroupTrack1, sampleGroupDefaults1, {
+        easing: Lib.d3Ease.easeLinear,
+        endBehavior: "boomerang"
+      });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(1250)).toEqual({ x: 7.5, y: 5 });
     });
-    expect(getFrameState(2000)).toEqual({
+
+    test("result#length is correct for group with a (passive) loop", () => {
+      const { length } = gen(sampleGroupTrack2(true), sampleMultiDefaults2);
+      expect(length).toEqual(1000);
+    });
+
+    test("result#getFrameState resolves correctly for group with a (passive) loop", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack2(true),
+        sampleGroupDefaults2,
+        { easing: easeLinear, endBehavior: "continue" }
+      );
+      expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+      const expectedX = 10;
+      expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
+      expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(2000)).toEqual({ x: expectedX, y: 0 });
+    });
+
+    test("result#length is correct for group with a (active, count) loop", () => {
+      const { length } = gen(
+        sampleGroupTrack2({ count: 2 }),
+        sampleMultiDefaults2
+      );
+      expect(length).toEqual(3000);
+    });
+
+    test("result#getFrameState resolves correctly for group with a (active, count) loop", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack2({ count: 2 }),
+        sampleGroupDefaults2,
+        { easing: easeLinear, endBehavior: "continue" }
+      );
+      expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
+      expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
+      const expectedX = 10;
+      expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
+      expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(2500)).toEqual({ x: expectedX, y: 10 });
+      expect(getFrameState(3500)).toEqual({ x: expectedX, y: 0 });
+    });
+
+    test("throws an error if a group includes 'state'", () => {
+      expect(() => {
+        gen(
+          [
+            {
+              regions: [{ duration: 1000 }],
+              state: { x: { to: 1 } }
+            }
+          ],
+          { x: 0 }
+        );
+      }).toThrowError();
+    });
+
+    test("throws an error if a group includes 'duration'", () => {
+      expect(() => {
+        gen(
+          [
+            {
+              regions: [{ duration: 1000 }],
+              duration: 800
+            }
+          ],
+          { x: 0 }
+        );
+      }).toThrowError();
+    });
+
+    const sampleGroupTrack3 = (relativeTime?: boolean): ITrackRegion[] => [
+      {
+        duration: 1000,
+        state: { x: { to: 10 } }
+      },
+      {
+        regions: [
+          {
+            start: 2000,
+            duration: 1000,
+            state: { y: { to: 10 } }
+          },
+          {
+            duration: 1000,
+            state: { y: { to: 0 } }
+          }
+        ],
+        relativeTime
+      }
+    ];
+    const sampleGroupDefaults3 = {
       x: 0,
-      y: 1
+      y: 0
+    };
+
+    test("result#length is correct for a delayed group with default relativeTime setting (false)", () => {
+      const { length } = gen(sampleGroupTrack3(), sampleGroupDefaults3);
+      expect(length).toEqual(4000);
+    });
+
+    test("result#length is correct for a delayed group with relativeTime = false", () => {
+      const { length } = gen(sampleGroupTrack3(false), sampleGroupDefaults3);
+      expect(length).toEqual(4000);
+    });
+
+    test("result#length is correct for a delayed group with relativeTime = true", () => {
+      const { length } = gen(sampleGroupTrack3(true), sampleGroupDefaults3);
+      expect(length).toEqual(5000);
+    });
+
+    test("result#getFrameState resolves correct state for a delayed group with default relativeTime setting (false)", () => {
+      const { getFrameState } = gen(sampleGroupTrack3(), sampleGroupDefaults3, {
+        easing: easeLinear
+      });
+      expect(getFrameState(2000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(2500)).toEqual({ x: 10, y: 5 });
+      expect(getFrameState(3000)).toEqual({ x: 10, y: 10 });
+      expect(getFrameState(4000)).toEqual({ x: 10, y: 0 });
+    });
+
+    test("result#getFrameState resolves correct state for a delayed group with relativeTime = true", () => {
+      const { getFrameState } = gen(
+        sampleGroupTrack3(true),
+        sampleGroupDefaults3,
+        {
+          easing: easeLinear
+        }
+      );
+      expect(getFrameState(2000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(2500)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(3000)).toEqual({ x: 10, y: 0 });
+      expect(getFrameState(3500)).toEqual({ x: 10, y: 5 });
+      expect(getFrameState(4000)).toEqual({ x: 10, y: 10 });
+      expect(getFrameState(5000)).toEqual({ x: 10, y: 0 });
+    });
+
+    const sampleGroupDefaults4 = {
+      width1: 30,
+      width2: 30,
+      morph1: 1,
+      morph2: 1
+    };
+    const sampleGroupTrack4 = [
+      { duration: 500 },
+      multi([
+        multi<any>([
+          {
+            duration: 100,
+            state: {
+              morph1: { to: 0 }
+            }
+          },
+          {
+            duration: 1000,
+            state: {
+              width1: { to: 50 }
+            }
+          }
+        ]),
+        multi<any>([
+          {
+            duration: 100,
+            state: {
+              morph2: { to: 0 }
+            }
+          },
+          {
+            duration: 1000,
+            state: {
+              width2: { to: 50 }
+            },
+            easing: Lib.d3Ease.easeElastic
+          }
+        ])
+      ])
+    ];
+
+    test("result#activeVars includes all the variables used throughout the animation", () => {
+      const { activeVars } = gen(sampleGroupTrack4, sampleGroupDefaults4);
+      expect(activeVars).toEqual(
+        new Set(["morph1", "morph2", "width1", "width2"])
+      );
+    });
+
+    test("result#activeVars will not include variables that were never used", () => {
+      const { activeVars } = gen(
+        [
+          multi<any>([
+            {
+              duration: 100,
+              state: {
+                morph1: { to: 0 }
+              }
+            },
+            {
+              duration: 1000,
+              state: {
+                width1: { to: 50 }
+              }
+            }
+          ])
+        ],
+        sampleGroupDefaults4
+      );
+
+      expect(activeVars).toEqual(new Set(["morph1", "width1"]));
     });
   });
 });

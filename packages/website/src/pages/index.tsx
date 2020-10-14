@@ -1,6 +1,6 @@
 import React from "react";
 /** @jsx jsx */
-import { jsx, Container, Box, Flex, Text } from "theme-ui";
+import { jsx, Container, Flex, Text } from "theme-ui";
 import Layout from "../components/Layout";
 import AnimationCard from "../components/AnimationCard";
 import LinkButton from "../components/LinkButton";
@@ -8,6 +8,7 @@ import GranularAnimation from "../components/animations/GranularAnimation";
 import WhateverAnimation from "../components/animations/WhateverAnimation";
 import LandingController from "../components/LandingController";
 import { HomePageContext } from "../context/HomePageContext";
+import SEO from "../components/SEO";
 
 export default function Home() {
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1);
@@ -18,6 +19,7 @@ export default function Home() {
       value={{ playbackSpeed, setPlaybackSpeed, progress, setProgress }}
     >
       <Layout>
+        <SEO title="Home" />
         <Container
           p={[0, 0, 5]}
           pt={[0, 5, 4]}

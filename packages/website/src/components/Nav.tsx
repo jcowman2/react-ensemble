@@ -41,7 +41,7 @@ const StyledNavLink: React.FC<{
   );
 };
 
-const Nav: React.FC = props => {
+const Nav: React.FC = () => {
   return (
     <Container>
       <Flex sx={{ flexDirection: ["column", "row", "row"] }}>
