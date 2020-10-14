@@ -17,7 +17,8 @@
     "build": "yarn run build:src && yarn run build:types",
     "clean": "trash ./dist",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "yarn run test && yarn run clean && yarn run build"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
