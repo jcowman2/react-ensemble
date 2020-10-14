@@ -1,9 +1,17 @@
 const remarkSlug = require("remark-slug");
 
 module.exports = {
+  siteMetadata: {
+    title: "React Ensemble",
+    titleTemplate: "%s | React Ensemble",
+    description:
+      "Intuitive and precise control for complex animations in React.",
+    url: "https://www.react-ensemble.dev"
+  },
   plugins: [
     "gatsby-plugin-theme-ui",
     "gatsby-plugin-sharp",
+    "gatsby-plugin-react-helmet",
     {
       resolve: "gatsby-remark-images",
       options: {

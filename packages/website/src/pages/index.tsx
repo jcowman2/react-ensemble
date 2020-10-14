@@ -8,6 +8,7 @@ import GranularAnimation from "../components/animations/GranularAnimation";
 import WhateverAnimation from "../components/animations/WhateverAnimation";
 import LandingController from "../components/LandingController";
 import { HomePageContext } from "../context/HomePageContext";
+import SEO from "../components/SEO";
 
 export default function Home() {
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1);
@@ -18,6 +19,7 @@ export default function Home() {
       value={{ playbackSpeed, setPlaybackSpeed, progress, setProgress }}
     >
       <Layout>
+        <SEO title="Home" />
         <Container
           p={[0, 0, 5]}
           pt={[0, 5, 4]}
