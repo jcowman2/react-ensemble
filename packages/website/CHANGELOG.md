@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.3.0...react-ensemble-website@0.4.0) (2020-10-14)
+
+
+### Bug Fixes
+
+* **react-ensemble:** fix the way activeVars are calculated in TrackUtils.gen ([143dc93](https://github.com/jcowman2/react-ensemble/commit/143dc930b0aae573e267e885a5e640f571f2d2c3))
+
+
+### Features
+
+* **react-ensemble:** add group and loop to TrackUtils ([89dd3e3](https://github.com/jcowman2/react-ensemble/commit/89dd3e3d191225f4e00d6e7e31a925e46ff08ba3))
+* **website:** add better 404 page ([291e6d3](https://github.com/jcowman2/react-ensemble/commit/291e6d3e1632d47f5609aebda73fe568630d10ad))
+* **website:** add Quick Start animation ([81e4370](https://github.com/jcowman2/react-ensemble/commit/81e4370ce87043a8ac634aa70a3a91d1c08f2e00))
+* **website:** add Quick Start part 3 and accompanying config ([a59f2e5](https://github.com/jcowman2/react-ensemble/commit/a59f2e577a584a0bd1ca70b82029e16376f627e7))
+* **website:** add SEO ([c500d4e](https://github.com/jcowman2/react-ensemble/commit/c500d4ef7b613e2206fb7cf5e231b8171946226f))
+* **website:** add seo image ([0774cd8](https://github.com/jcowman2/react-ensemble/commit/0774cd8ec5191c729ff521008e1524724e862556))
+* **website:** add test animation example ([407712a](https://github.com/jcowman2/react-ensemble/commit/407712af98c5fe0e075b002cb9a42581e93981ec))
+* **website:** write most of the Quick Start guide and various enhancements ([76eb8b1](https://github.com/jcowman2/react-ensemble/commit/76eb8b1352d041cf34e7f42b03ce6ec20f9403ca))
+
+
+
+
+
 # [0.3.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.2.0...react-ensemble-website@0.3.0) (2020-10-09)
 
 
