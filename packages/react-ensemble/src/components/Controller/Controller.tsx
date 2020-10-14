@@ -1,8 +1,8 @@
 import React from "react";
-import { Direction, IControlPanelProps } from "./controller.types";
+import { Direction, ControlPanelProps } from "./controller.types";
 import SimpleControlPanel from "../SimpleControlPanel/SimpleControlPanel";
-import { ITimelineProps } from "../Timeline/Timeline";
-import { IAnimation } from "../../utils/TrackUtils/trackUtils.types";
+import { TimelineProps } from "../Timeline/Timeline";
+import { Animation } from "../../utils/TrackUtils/trackUtils.types";
 
 const DEFAULT_VISIBLE = true;
 const DEFAULT_TRIGGER = "manual";
@@ -12,10 +12,10 @@ const DEFAULT_REVERSE_MODIFIER = -2;
 const DEFAULT_PANEL_STYLE = {};
 const DEFAULT_PANEL = SimpleControlPanel;
 
-export interface IControllerProps<State extends object = any> {
+export interface ControllerProps<State extends object = any> {
   children: (
     controlProps: Pick<
-      ITimelineProps<State>,
+      TimelineProps<State>,
       "value" | "playing" | "playbackSpeed" | "onTick" | "onEnded" | "onLoad"
     >
   ) => JSX.Element;
@@ -25,11 +25,11 @@ export interface IControllerProps<State extends object = any> {
   fastForwardModifier?: number;
   reverseModifier?: number;
   panelStyle?: object;
-  panel?: (props: IControlPanelProps) => JSX.Element;
+  panel?: (props: ControlPanelProps) => JSX.Element;
 }
 
 const Controller = <State extends object = any>(
-  props: IControllerProps<State>
+  props: ControllerProps<State>
 ): JSX.Element | null => {
   const {
     children,
@@ -44,7 +44,7 @@ const Controller = <State extends object = any>(
 
   const [playing, setPlaying] = React.useState(false);
   const [tick, setTick] = React.useState(0);
-  const [animation, setAnimation] = React.useState<IAnimation<State>>();
+  const [animation, setAnimation] = React.useState<Animation<State>>();
   const [shouldResetOnPlay, setShouldResetOnPlay] = React.useState(false);
   const [direction, setDirection] = React.useState<Direction>(Direction.Normal);
 

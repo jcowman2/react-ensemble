@@ -1,7 +1,7 @@
 import {
-  ITrackConfig,
-  ICalculatedTrackRegion,
-  ITrackRegion,
+  TrackConfig,
+  CalculatedTrackRegion,
+  TrackRegion,
   TrackRegionContext
 } from "../trackUtils.types";
 import { isGroup, parseGroup } from "./parseGroup";
@@ -10,8 +10,8 @@ import { genPadRegion } from "./pad";
 import { errorThrower } from "./validation";
 import { isNumber } from "../helpers";
 
-interface IGenLayerResult<State extends object> {
-  regions: ICalculatedTrackRegion<State>[];
+interface GenLayerResult<State extends object> {
+  regions: CalculatedTrackRegion<State>[];
   length: number;
 }
 
@@ -25,7 +25,7 @@ const genRegionContext = (
 });
 
 const offsetTrack = <State extends object>(
-  track: ITrackRegion<State>[],
+  track: TrackRegion<State>[],
   startOffset: number
 ) => {
   return track.map(region => {
@@ -46,13 +46,13 @@ const offsetTrack = <State extends object>(
 
 export const genLayer = <State extends object>(
   layerName: string,
-  rawTrack: ITrackRegion<State>[],
+  rawTrack: TrackRegion<State>[],
   defaultState: State,
-  config: Required<ITrackConfig<State>>,
+  config: Required<TrackConfig<State>>,
   startOffset: number
-): IGenLayerResult<State> => {
+): GenLayerResult<State> => {
   let currentTime = 0;
-  const regions: ICalculatedTrackRegion<State>[] = [];
+  const regions: CalculatedTrackRegion<State>[] = [];
 
   let workingState = { ...defaultState };
   let endsWithPassiveLoop = false;

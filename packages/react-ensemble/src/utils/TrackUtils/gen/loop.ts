@@ -1,11 +1,11 @@
 import {
-  ITrackRegion,
-  ITrackRegionAtom,
+  TrackRegion,
+  TrackRegionAtom,
   TrackRegionContext
 } from "../trackUtils.types";
 import { isNumber } from "../helpers";
 
-interface IGenLoopRegionResponse<State extends object> {
+interface GenLoopRegionResponse<State extends object> {
   loopGetter: (current: number) => State;
   newDuration: number;
   newEnd: number;
@@ -13,7 +13,7 @@ interface IGenLoopRegionResponse<State extends object> {
 }
 
 type LoopRegionRequiredInfo<State extends object> = Pick<
-  Required<ITrackRegionAtom<State>>,
+  Required<TrackRegionAtom<State>>,
   "loop" | "duration" | "end" | "start"
 >;
 
@@ -30,7 +30,7 @@ const genLoopRegion = <State extends object>(
   regionContext: TrackRegionContext,
   stateGetter: (current: number) => State,
   nextRegionStart?: number
-): IGenLoopRegionResponse<State> => {
+): GenLoopRegionResponse<State> => {
   const { loop, start, duration: givenDuration, end: givenEnd } = region;
 
   if (!loop) {
@@ -102,7 +102,7 @@ const genLoopRegion = <State extends object>(
 export const parseLoopRegionInLayer = <State extends object>(
   region: LoopRegionRequiredInfo<State>,
   regionContext: TrackRegionContext,
-  track: ITrackRegion<State>[],
+  track: TrackRegion<State>[],
   stateGetter: (current: number) => State
 ) => {
   const { index } = regionContext;

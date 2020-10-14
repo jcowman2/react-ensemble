@@ -1,17 +1,17 @@
 import { easeCubic } from "d3-ease";
 import { interpolate } from "d3-interpolate";
 import {
-  ITrackRegion,
-  ITrackConfig,
-  IAnimation,
+  TrackRegion,
+  TrackConfig,
+  Animation,
   TrackLayerResolver
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
 import { layerResolvers } from "../layerResolvers/layerResolvers";
 
 const applyConfigDefaults = <State extends object>(
-  config: ITrackConfig<State> = {}
-): Required<ITrackConfig<State>> => {
+  config: TrackConfig<State> = {}
+): Required<TrackConfig<State>> => {
   const {
     endBehavior = "stop",
     easing = easeCubic,
@@ -22,10 +22,10 @@ const applyConfigDefaults = <State extends object>(
 };
 
 export const gen = <State extends object>(
-  track: ITrackRegion<State>[],
+  track: TrackRegion<State>[],
   defaults: State,
-  config?: ITrackConfig<State>
-): IAnimation<State> => {
+  config?: TrackConfig<State>
+): Animation<State> => {
   const fullConfig = applyConfigDefaults(config);
   const animation = genAnimation(track, defaults, fullConfig);
 

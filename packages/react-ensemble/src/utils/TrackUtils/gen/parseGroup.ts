@@ -1,8 +1,8 @@
 import {
-  ICalculatedTrackRegion,
-  ITrackConfig,
-  ITrackRegion,
-  ITrackRegionGroup,
+  CalculatedTrackRegion,
+  TrackConfig,
+  TrackRegion,
+  TrackRegionGroup,
   TrackRegionContext
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
@@ -12,17 +12,17 @@ import { genPadRegion } from "./pad";
 
 const FORBIDDEN_FIELDS = ["state", "duration"];
 
-export const isGroup = (region: ITrackRegion): region is ITrackRegionGroup => {
+export const isGroup = (region: TrackRegion): region is TrackRegionGroup => {
   return (region as any).regions;
 };
 
 export const parseGroup = <State extends object>(
-  group: ITrackRegionGroup<State>,
+  group: TrackRegionGroup<State>,
   regionContext: TrackRegionContext,
   currentTime: number,
   workingState: State,
-  track: ITrackRegion<State>[],
-  config: Required<ITrackConfig>
+  track: TrackRegion<State>[],
+  config: Required<TrackConfig>
 ) => {
   for (const field of FORBIDDEN_FIELDS) {
     if (group[field] !== undefined) {
@@ -35,7 +35,7 @@ export const parseGroup = <State extends object>(
   const { regions, relativeTime = false } = group;
 
   let animationStart = currentTime;
-  const newRegions: ICalculatedTrackRegion[] = [];
+  const newRegions: CalculatedTrackRegion[] = [];
 
   if (isNumber(group.start)) {
     const start = group.start!;
@@ -58,7 +58,7 @@ export const parseGroup = <State extends object>(
     }
   }
 
-  const animConfig: Required<ITrackConfig> = {
+  const animConfig: Required<TrackConfig> = {
     ...config,
     endBehavior: "continue"
   };
@@ -88,8 +88,7 @@ export const parseGroup = <State extends object>(
   let determinedEndsWithPassiveLoop = false;
   let willUpdateToTime = animationEnd;
 
-  // const allVars = new Set(Object.keys(workingState)) as Set<keyof State>;
-  const animationRegion: ICalculatedTrackRegion = {
+  const animationRegion: CalculatedTrackRegion = {
     id: newId("group"),
     start: animationStart,
     end: animationEnd,

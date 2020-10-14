@@ -1,11 +1,11 @@
 import IntervalTree from "node-interval-tree";
 import {
   TrackLayerResolver,
-  IResolverLayerData,
-  ICalculatedTrackRegion
+  ResolverLayerData,
+  CalculatedTrackRegion
 } from "../trackUtils.types";
 
-export interface IIntervalTreeSegment<State> {
+export interface IntervalTreeSegment<State> {
   id: string;
   start: number;
   end: number;
@@ -16,7 +16,7 @@ export interface IIntervalTreeSegment<State> {
 }
 
 export const makeIntervalTreeFrameStateGetter = <State extends object>(
-  tree: IntervalTree<IIntervalTreeSegment<State>>,
+  tree: IntervalTree<IntervalTreeSegment<State>>,
   layerRanks: Record<string, number>,
   resolver: TrackLayerResolver<State>
 ): ((current: number) => State) => {
@@ -29,7 +29,7 @@ export const makeIntervalTreeFrameStateGetter = <State extends object>(
 
     const stateResolverData: Record<
       string,
-      IResolverLayerData<State[keyof State]>[]
+      ResolverLayerData<State[keyof State]>[]
     > = {};
     for (const key in intervals[0].stateLastChanged) {
       stateResolverData[key] = [];
@@ -70,8 +70,8 @@ export const makeIntervalTreeFrameStateGetter = <State extends object>(
 };
 
 export const addRegionsToIntervalTree = <State extends object>(
-  tree: IntervalTree<IIntervalTreeSegment<State>>,
-  track: ICalculatedTrackRegion<State>[],
+  tree: IntervalTree<IntervalTreeSegment<State>>,
+  track: CalculatedTrackRegion<State>[],
   defaults: State
 ): void => {
   if (!track.length) {

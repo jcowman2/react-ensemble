@@ -1,6 +1,6 @@
 import { gen } from "./gen";
 import { inspect } from "util";
-import { ILoopConfig, ITrackRegion } from "../trackUtils.types";
+import { LoopConfig, TrackRegion } from "../trackUtils.types";
 import { Lib } from "../../..";
 import { multi } from "../multi/multi";
 import { DEFAULT_LAYER } from "./layers";
@@ -111,7 +111,7 @@ describe("TrackUtils.gen()", () => {
     x4: 0
   };
 
-  const sampleMultiTrack3: ITrackRegion[] = [
+  const sampleMultiTrack3: TrackRegion[] = [
     {
       layer: "loop",
       state: {
@@ -478,7 +478,7 @@ describe("TrackUtils.gen()", () => {
   });
 
   describe("Grouping", () => {
-    const sampleGroupTrack1: ITrackRegion[] = [
+    const sampleGroupTrack1: TrackRegion[] = [
       {
         layer: "1",
         duration: 1000,
@@ -503,7 +503,7 @@ describe("TrackUtils.gen()", () => {
       y: 0
     };
 
-    const sampleGroupTrack2 = (loop: ILoopConfig | boolean): ITrackRegion[] => [
+    const sampleGroupTrack2 = (loop: LoopConfig | boolean): TrackRegion[] => [
       {
         layer: "1",
         duration: 1000,
@@ -653,7 +653,7 @@ describe("TrackUtils.gen()", () => {
       }).toThrowError();
     });
 
-    const sampleGroupTrack3 = (relativeTime?: boolean): ITrackRegion[] => [
+    const sampleGroupTrack3 = (relativeTime?: boolean): TrackRegion[] => [
       {
         duration: 1000,
         state: { x: { to: 10 } }

@@ -1,7 +1,7 @@
 import React from "react";
-import { IControlPanelProps, Direction } from "../Controller/controller.types";
+import { ControlPanelProps, Direction } from "../Controller/controller.types";
 
-const SimpleControlPanel: React.FC<IControlPanelProps> = props => {
+const SimpleControlPanel: React.FC<ControlPanelProps> = props => {
   const {
     tick,
     direction,

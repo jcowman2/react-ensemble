@@ -1,6 +1,6 @@
 import {
-  ITrackRegionAtom,
-  ICalculatedTrackRegion,
+  TrackRegionAtom,
+  CalculatedTrackRegion,
   TrackRegionContext
 } from "../trackUtils.types";
 import { newId, clampString, isNumber } from "../helpers";
@@ -10,7 +10,7 @@ export const genPadRegion = <S extends object>(
   end: number,
   rawState: S,
   layer: string
-): ICalculatedTrackRegion<S> => ({
+): CalculatedTrackRegion<S> => ({
   id: newId("region_pad"),
   start,
   end,
@@ -20,15 +20,15 @@ export const genPadRegion = <S extends object>(
 });
 
 export const getRegionSummary = <State extends object>(
-  region: ITrackRegionAtom<State>
+  region: TrackRegionAtom<State>
 ) => `with state '${clampString(JSON.stringify(region.state || {}))}'`;
 
 export const findRegionBoundsAndPad = <State extends object>(
-  region: ITrackRegionAtom<State>,
+  region: TrackRegionAtom<State>,
   regionContext: TrackRegionContext,
   currentTime: number,
   currentState: State,
-  track: ITrackRegionAtom<State>[]
+  track: TrackRegionAtom<State>[]
 ) => {
   const { layerName, index, throwErr } = regionContext;
   const startDefined = isNumber(region.start);
@@ -39,7 +39,7 @@ export const findRegionBoundsAndPad = <State extends object>(
   let start: number;
   let duration: number;
   let end: number;
-  let padRegion: ICalculatedTrackRegion<State> | undefined = undefined;
+  let padRegion: CalculatedTrackRegion<State> | undefined = undefined;
 
   if (!(startDefined || durationDefined || endDefined)) {
     throwErr(

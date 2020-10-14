@@ -1,13 +1,13 @@
 import React from "react";
 import {
-  ITrackRegion,
+  TrackRegion,
   TimelineEndBehavior,
   EasingFunction,
   InterpolationFunction,
-  IAnimation,
+  Animation,
   TrackLayerResolver
 } from "../../utils/TrackUtils/trackUtils.types";
-import { ITickEvent, IUpdateEvent, ILoadEvent } from "./timeline.types";
+import { TickEvent, UpdateEvent, LoadEvent } from "./timeline.types";
 import { gen } from "../../utils/TrackUtils/trackUtils";
 
 export const TIMELINE_DEFAULTS = {
@@ -19,8 +19,8 @@ export const TIMELINE_DEFAULTS = {
   onLoad: () => {}
 };
 
-export interface ITimelineProps<State extends object = any> {
-  track: ITrackRegion<State>[];
+export interface TimelineProps<State extends object = any> {
+  track: TrackRegion<State>[];
   defaultState: State;
 
   value: number;
@@ -43,14 +43,14 @@ export interface ITimelineProps<State extends object = any> {
   interp?: InterpolationFunction;
   resolver?: TrackLayerResolver<State>;
 
-  onTick?: (event: ITickEvent) => void;
-  onUpdate?: (event: IUpdateEvent<State>) => void;
+  onTick?: (event: TickEvent) => void;
+  onUpdate?: (event: UpdateEvent<State>) => void;
   onEnded?: () => void;
-  onLoad?: (event: ILoadEvent<State>) => void;
+  onLoad?: (event: LoadEvent<State>) => void;
 }
 
 const Timeline = <State extends object = any>(
-  props: React.PropsWithChildren<ITimelineProps<State>>
+  props: React.PropsWithChildren<TimelineProps<State>>
 ): null => {
   const {
     track,
@@ -69,7 +69,7 @@ const Timeline = <State extends object = any>(
     onLoad = TIMELINE_DEFAULTS.onLoad
   } = props;
 
-  const animation = React.useRef<IAnimation<State>>();
+  const animation = React.useRef<Animation<State>>();
   const interval = React.useRef<NodeJS.Timeout>();
   const [hasInit, setHasInit] = React.useState(false);
   const [queued, setQueued] = React.useState(0);

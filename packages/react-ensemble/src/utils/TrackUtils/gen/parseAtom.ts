@@ -1,8 +1,8 @@
 import {
-  ICalculatedTrackRegion,
-  ITrackConfig,
-  ITrackRegion,
-  ITrackRegionAtom,
+  CalculatedTrackRegion,
+  TrackConfig,
+  TrackRegion,
+  TrackRegionAtom,
   TrackRegionContext
 } from "../trackUtils.types";
 import { newId } from "../helpers";
@@ -13,12 +13,12 @@ import { createDeltaState, buildAtomicStateInterpolator } from "./stateUtils";
 const FORBIDDEN_FIELDS = ["regions", "relativeTime"];
 
 export const parseAtom = <State extends object>(
-  region: ITrackRegionAtom,
+  region: TrackRegionAtom,
   regionContext: TrackRegionContext,
   currentTime: number,
   workingState: State,
-  track: ITrackRegion<State>[],
-  config: Required<ITrackConfig<State>>
+  track: TrackRegion<State>[],
+  config: Required<TrackConfig<State>>
 ) => {
   const { layerName, throwErr } = regionContext;
 
@@ -39,7 +39,7 @@ export const parseAtom = <State extends object>(
   const { start, end, duration, newTime, padRegion } = boundResult;
 
   let willUpdateToTime = newTime;
-  const newRegions: ICalculatedTrackRegion[] = [];
+  const newRegions: CalculatedTrackRegion[] = [];
   let newWorkingState = workingState;
   let determinedEndsWithPassiveLoop = false;
 
@@ -72,7 +72,7 @@ export const parseAtom = <State extends object>(
 
   const stateGetter = (current: number) => stateInterpolator(current).state;
   let restRegionConfig: { get: (current: number) => State } & Partial<
-    Required<ITrackRegionAtom<State>>
+    Required<TrackRegionAtom<State>>
   > = { get: stateGetter };
 
   if (providedLoop) {

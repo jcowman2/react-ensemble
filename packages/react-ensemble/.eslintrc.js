@@ -27,7 +27,6 @@ module.exports = {
     "**/*.test.ts"
   ],
   rules: {
-    "@typescript-eslint/interface-name-prefix": 0, // Disable "I" prefix for interfaces enforcement
     "@typescript-eslint/ban-ts-ignore": 0,
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
