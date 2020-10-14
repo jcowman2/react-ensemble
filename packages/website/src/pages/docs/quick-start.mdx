@@ -311,7 +311,7 @@ You can describe regions using these fields:
 - `duration`
 - `state`
 - `loop`
-- [and more!](/docs/api/Timeline)
+- [and more!](/docs/api/trackutils)
 
 Lets animate our circle coming in and out of frame. Add the following code _outside_ the component:
 
@@ -438,7 +438,7 @@ const { d3Ease } = Lib;
 `TrackUtils` contains utility functions related to manipulating and parsing animation tracks.
 
 The largest of these functions is `TrackUtils.gen`, which parses a track into a queryable animation object.
-`Timeline` uses this function under the hood, but you can also import it yourself. For more information, see the [TrackUtils.gen docs](/api/docs/TrackUtils#gen).
+`Timeline` uses this function under the hood, but you can also import it yourself. For more information, see the [TrackUtils.gen docs](/docs/api/trackutils).
 
 For this example, we'll be using `TrackUtils.multi`. Add the following code to your track, right after the first region:
 
@@ -623,7 +623,7 @@ For example, our `multi` region is equivalent to this region, which is called a 
 }
 ```
 
-For more information on layers and groups, see the [Layers and Groups guide](/docs/layers-and-groups).
+For more information on layers and groups, see the [Layers and Groups guide](/docs/guides/layers-and-groups).
 
 ### Easing with Lib.d3Ease
 
