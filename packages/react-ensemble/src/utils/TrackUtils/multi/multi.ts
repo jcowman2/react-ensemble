@@ -5,6 +5,7 @@ import {
   TrackRegionSingleOrArray
 } from "../trackUtils.types";
 import { layer } from "../layer/layer";
+import { group } from "../group/group";
 
 export const multi = <State extends object>(
   tracks:
@@ -25,5 +26,5 @@ export const multi = <State extends object>(
     allRegions.push(...regions);
   }
 
-  return { ...config, regions: allRegions };
+  return group(allRegions, config);
 };
