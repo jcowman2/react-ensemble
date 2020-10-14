@@ -598,7 +598,7 @@ When we run the code, both regions execute at the same time!
 You can use all the features of layering by configuring the right properties on your track regions.
 All `multi` does is add them for you.
 
-For example, our `multi` region is equivalent to this region:
+For example, our `multi` region is equivalent to this region, which is called a **group**.
 
 ```jsx
 // This is just an example!
@@ -623,7 +623,7 @@ For example, our `multi` region is equivalent to this region:
 }
 ```
 
-For more information on layers, see the [Layers and Groups guide](/docs/layers-and-groups).
+For more information on layers and groups, see the [Layers and Groups guide](/docs/layers-and-groups).
 
 ### Easing with Lib.d3Ease
 
@@ -669,7 +669,7 @@ Check out the [Easing and Interpolating guide](/docs/guides/easing-and-interpola
 
 ### Shifting Back
 
-To make the square shift back into a circle, add another multi-region just after the first one:
+To make the square shift back into a circle, add another group just after the first one:
 
 ```jsx
 multi([
@@ -796,3 +796,115 @@ At this point, the animation should look like this:
 ```
 
 ## Part 4: Final Touches
+
+To wrap things up, we'll add one last group to the track. First, add a few more properties to the default state and the circle div:
+
+```jsx
+// Outside the component
+const defaultAnimState = {
+  circleMorph: 1,
+  width: 30,
+  color: "__primary", // New line
+  x: -250,
+  y: 50, // New line
+  opacity: 0,
+  angle: 0 // New line
+};
+
+// The circle div
+<div
+  style={{
+    position: "relative",
+    borderRadius: animState.width * animState.circleMorph * 0.5,
+    width: animState.width,
+    height: animState.width,
+    backgroundColor: animState.color, // Changed line
+    left: animState.x,
+    top: animState.y - animState.width / 2, // Changed line
+    opacity: animState.opacity,
+    transform: `rotate(${animState.angle}deg)` // Changed line
+  }}
+/>;
+```
+
+Then, add this group between the two existing groups in the track.
+This time, we're passing an array of three arrays into `multi`, which will put each of these sub-arrays into its own layer.
+
+```jsx
+multi([
+  [
+    {
+      start: 2500,
+      duration: 750,
+      state: {
+        y: { to: 200 }
+      },
+      easing: d3Ease.easeExpIn,
+      loop: {
+        count: 1,
+        boomerang: true
+      }
+    },
+    {
+      duration: 0,
+      state: {
+        y: { set: 50 }
+      }
+    }
+  ],
+  [
+    {
+      start: 3250,
+      duration: 1500,
+      state: {
+        angle: { to: 360 }
+      }
+    },
+    {
+      duration: 750,
+      state: {
+        angle: { to: 180 }
+      }
+    }
+  ],
+  [
+    {
+      start: 3250,
+      duration: 1500,
+      state: {
+        color: { from: "__tertiary", to: "__secondary" }
+      },
+      easing: d3Ease.easeLinear
+    },
+    {
+      duration: 750,
+      state: {
+        color: { from: "__tertiary", to: "__primary" }
+      },
+      easing: d3Ease.easeLinear
+    }
+  ]
+]),
+```
+
+This region's a bit of a doozy, so let's walk through each layer:
+
+1. The first layer scripts the "yo-yo" effect of the square bouncing off the bottom of the frame. It uses the `loop` property, which we'll explain more in a minute.
+2. The second layer rotates the square. In the circle div, we use the angle data in a [CSS transformation function](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/rotate).
+3. The third layer changes the square's color. React Ensemble can morph (or _interpolate_) many different types of values, including colors. For more information, see the [Easing and Interpolating guide](/docs/guides/easing-and-interpolating).
+
+### Looping Regions
+
+The first region of our group has a special property, `loop`, which we can use to loop regions within the animation.
+Check out the complete reference in the [Looping guide](/docs/guides/looping).
+
+This region's `loop.count = 1`, meaning that the region will play twice: once like normal, and then looping a single time.
+Setting `loop.boomerang = true` will make the region run backwards to reset to its starting state after every iteration.
+
+### The Finished Product
+
+Congratulations! You now have a complete animation that encapsulates many of the features React Ensemble has to offer.
+
+<QuickStart />
+
+When you're ready, jump into the [Guides](/docs/guides) or check out the [API Reference](/docs/api). Have a wonderful time animating!
