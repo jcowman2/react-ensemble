@@ -39,20 +39,6 @@
     ])
   ];
 
-  const layerResolver = (stateKey, layers) => {
-    const layerPrefix =
-      stateKey === "width1" || stateKey === "morph1"
-        ? "_default.0"
-        : "_default.1";
-    const groupLayers = layers.filter(layer =>
-      layer.name.startsWith(layerPrefix)
-    );
-    return layerResolvers.overrideLast(
-      stateKey,
-      groupLayers.length ? groupLayers : layers
-    );
-  };
-
   const [animState, setAnimState] = React.useState(defaultState);
   const wrapperStyle = {
     display: "flex",
@@ -73,7 +59,6 @@
             defaultState={defaultState}
             track={track}
             onUpdate={({ state }) => setAnimState(state)}
-            resolver={layerResolver}
           />
         )}
       </Controller>

@@ -3,7 +3,7 @@ import _groupBy from "lodash.groupby";
 import alphanumSort from "alphanum-sort";
 import { ITrackRegion, ITrackRegionAtom } from "../trackUtils.types";
 
-const DEFAULT_LAYER = "_default";
+export const DEFAULT_LAYER = "_default";
 
 const namespaceLayer = (layerName: string, rootLayer: string) => {
   return rootLayer === "" ? layerName : `${rootLayer}.${layerName}`;

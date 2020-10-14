@@ -2,6 +2,8 @@ import { gen } from "./gen";
 import { inspect } from "util";
 import { ILoopConfig, ITrackRegion } from "../trackUtils.types";
 import { Lib } from "../../..";
+import { multi } from "../multi/multi";
+import { DEFAULT_LAYER } from "./layers";
 
 const easeLinear = Lib.d3Ease.easeLinear;
 
@@ -594,10 +596,7 @@ describe("TrackUtils.gen()", () => {
       );
       expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
       expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
-
-      // TODO - MUSTFIX: This will be 0 once the activeVars issue in parseGroup is fixed.
-      const expectedX = 0;
-
+      const expectedX = 10;
       expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
       expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
       expect(getFrameState(2000)).toEqual({ x: expectedX, y: 0 });
@@ -619,10 +618,7 @@ describe("TrackUtils.gen()", () => {
       );
       expect(getFrameState(0)).toEqual({ x: 0, y: 0 });
       expect(getFrameState(1000)).toEqual({ x: 10, y: 0 });
-
-      // TODO - MUSTFIX: This will be 0 once the activeVars issue in parseGroup is fixed.
-      const expectedX = 0;
-
+      const expectedX = 10;
       expect(getFrameState(1250)).toEqual({ x: expectedX, y: 5 });
       expect(getFrameState(1500)).toEqual({ x: expectedX, y: 10 });
       expect(getFrameState(2500)).toEqual({ x: expectedX, y: 10 });
@@ -721,6 +717,78 @@ describe("TrackUtils.gen()", () => {
       expect(getFrameState(3500)).toEqual({ x: 10, y: 5 });
       expect(getFrameState(4000)).toEqual({ x: 10, y: 10 });
       expect(getFrameState(5000)).toEqual({ x: 10, y: 0 });
+    });
+
+    const sampleGroupDefaults4 = {
+      width1: 30,
+      width2: 30,
+      morph1: 1,
+      morph2: 1
+    };
+    const sampleGroupTrack4 = [
+      { duration: 500 },
+      multi([
+        multi<any>([
+          {
+            duration: 100,
+            state: {
+              morph1: { to: 0 }
+            }
+          },
+          {
+            duration: 1000,
+            state: {
+              width1: { to: 50 }
+            }
+          }
+        ]),
+        multi<any>([
+          {
+            duration: 100,
+            state: {
+              morph2: { to: 0 }
+            }
+          },
+          {
+            duration: 1000,
+            state: {
+              width2: { to: 50 }
+            },
+            easing: Lib.d3Ease.easeElastic
+          }
+        ])
+      ])
+    ];
+
+    test("result#activeVars includes all the variables used throughout the animation", () => {
+      const { activeVars } = gen(sampleGroupTrack4, sampleGroupDefaults4);
+      expect(activeVars).toEqual(
+        new Set(["morph1", "morph2", "width1", "width2"])
+      );
+    });
+
+    test("result#activeVars will not include variables that were never used", () => {
+      const { activeVars } = gen(
+        [
+          multi<any>([
+            {
+              duration: 100,
+              state: {
+                morph1: { to: 0 }
+              }
+            },
+            {
+              duration: 1000,
+              state: {
+                width1: { to: 50 }
+              }
+            }
+          ])
+        ],
+        sampleGroupDefaults4
+      );
+
+      expect(activeVars).toEqual(new Set(["morph1", "width1"]));
     });
   });
 });

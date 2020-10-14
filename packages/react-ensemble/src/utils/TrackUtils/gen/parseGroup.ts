@@ -88,14 +88,14 @@ export const parseGroup = <State extends object>(
   let determinedEndsWithPassiveLoop = false;
   let willUpdateToTime = animationEnd;
 
-  const allVars = new Set(Object.keys(workingState)) as Set<keyof State>;
+  // const allVars = new Set(Object.keys(workingState)) as Set<keyof State>;
   const animationRegion: ICalculatedTrackRegion = {
     id: newId("group"),
     start: animationStart,
     end: animationEnd,
     layer: regionContext.layerName,
     get: stateGetter,
-    activeVars: allVars // TODO - Check for activeVars in animation
+    activeVars: animation.activeVars
   };
 
   if (group.loop) {

@@ -78,6 +78,7 @@ export interface IAnimation<State extends object> {
   config: Required<ITrackConfig<State>>;
   getFrameState(frame: number): State;
   layers: Record<string, ICalculatedTrackRegion<State>[]>;
+  activeVars: Set<keyof State>;
 }
 
 export interface TrackRegionContext {

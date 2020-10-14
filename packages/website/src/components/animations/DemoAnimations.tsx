@@ -1,9 +1,5 @@
 import React from "react";
 import { Controller, Timeline, TrackUtils, Lib } from "react-ensemble";
-import {
-  ITrackRegion,
-  TrackLayerResolver
-} from "react-ensemble/dist/types/utils/TrackUtils/trackUtils.types";
 import { PRIMARY, SECONDARY, TERTIARY } from "../../theme/colors";
 
 interface DemoAnimationState {
@@ -338,7 +334,7 @@ interface DemoAnimation3State {
 }
 
 export const DemoAnimation4: React.FC = () => {
-  const { multi, layerResolvers } = TrackUtils;
+  const { multi } = TrackUtils;
   const { d3Ease } = Lib;
 
   const defaultState = { width1: 30, width2: 30, morph1: 1, morph2: 1 };
@@ -377,20 +373,6 @@ export const DemoAnimation4: React.FC = () => {
     ])
   ];
 
-  const layerResolver: TrackLayerResolver = (stateKey, layers) => {
-    const layerPrefix =
-      stateKey === "width1" || stateKey === "morph1"
-        ? "_default.0"
-        : "_default.1";
-    const groupLayers = layers.filter(layer =>
-      layer.name.startsWith(layerPrefix)
-    );
-    return layerResolvers.overrideLast(
-      stateKey,
-      groupLayers.length ? groupLayers : layers
-    );
-  };
-
   const [animState, setAnimState] = React.useState(defaultState);
 
   return (
@@ -403,7 +385,6 @@ export const DemoAnimation4: React.FC = () => {
             defaultState={defaultState}
             track={track}
             onUpdate={({ state }) => setAnimState(state)}
-            resolver={layerResolver}
           />
         )}
       </Controller>

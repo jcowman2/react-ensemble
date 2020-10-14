@@ -27,6 +27,7 @@ export const genAnimation = <State extends object>(
   const { layers, layerRanks } = separateLayers(track, rootLayer);
 
   const calculatedLayers: Record<string, ICalculatedTrackRegion<State>[]> = {};
+  const activeVars = new Set<keyof State>();
 
   const tree = new IntervalTree<IIntervalTreeSegment<State>>();
   let animationLength = 0;
@@ -40,6 +41,9 @@ export const genAnimation = <State extends object>(
       startOffset
     );
     calculatedLayers[layerName] = regions;
+    regions.forEach(region =>
+      region.activeVars.forEach(value => activeVars.add(value))
+    );
     addRegionsToIntervalTree(tree, regions, defaults);
     animationLength = Math.max(animationLength, length);
   }
@@ -84,6 +88,7 @@ export const genAnimation = <State extends object>(
     layers: calculatedLayers,
     getFrameState,
     length: animationLength,
-    config: fullConfig
+    config: fullConfig,
+    activeVars
   };
 };
