@@ -6,7 +6,8 @@ module.exports = {
     titleTemplate: "%s | React Ensemble",
     description:
       "Intuitive and precise control for complex animations in React.",
-    url: "https://www.react-ensemble.dev"
+    url: "https://www.react-ensemble.dev",
+    image: "/images/react-ensemble-animation-library-logo.jpg"
   },
   plugins: [
     "gatsby-plugin-theme-ui",

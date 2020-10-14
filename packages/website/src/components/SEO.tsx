@@ -18,13 +18,14 @@ const query = graphql`
         titleTemplate
         defaultDescription: description
         siteUrl: url
+        defaultImage: image
       }
     }
   }
 `;
 
 const SEO: React.FC<SEOProps> = props => {
-  const { title, description, article = false } = props;
+  const { title, description, image, article = false } = props;
 
   const { pathname } = useLocation();
   const { site } = useStaticQuery(query);
@@ -33,18 +34,21 @@ const SEO: React.FC<SEOProps> = props => {
     defaultTitle,
     titleTemplate,
     defaultDescription,
-    siteUrl
+    siteUrl,
+    defaultImage
   } = site.siteMetadata;
 
   const seo = {
     title: title || defaultTitle,
     description: description || defaultDescription,
-    url: `${siteUrl}${pathname}`
+    url: `${siteUrl}${pathname}`,
+    image: `${siteUrl}${image || defaultImage}`
   };
 
   return (
     <Helmet title={seo.title} titleTemplate={titleTemplate}>
       <meta name="description" content={seo.description} />
+      <meta name="image" content={seo.image} />
 
       {/* OG */}
       {seo.url && <meta property="og:url" content={seo.url} />}
@@ -53,12 +57,14 @@ const SEO: React.FC<SEOProps> = props => {
       {seo.description && (
         <meta property="og:description" content={seo.description} />
       )}
+      {seo.image && <meta property="og:image" content={seo.image} />}
 
       {/* Twitter */}
       {seo.title && <meta name="twitter:title" content={seo.title} />}
       {seo.description && (
         <meta name="twitter:description" content={seo.description} />
       )}
+      {seo.image && <meta name="twitter:image" content={seo.image} />}
     </Helmet>
   );
 };
