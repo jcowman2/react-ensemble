@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import SideNav from "./SideNav";
 import mdxComponents from "../gatsby-plugin-theme-ui/components";
 import SEO from "./SEO";
+import DocsPagination from "./DocsPagination";
 
 const DocsLayout: React.FC<{
   pageContext: { frontmatter: { title: string } };
@@ -21,6 +22,7 @@ const DocsLayout: React.FC<{
             {title}
           </Heading>
           <MDXProvider components={mdxComponents}>{props.children}</MDXProvider>
+          <DocsPagination />
         </Container>
       </Flex>
     </Layout>
