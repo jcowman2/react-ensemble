@@ -1,3 +1,66 @@
 ---
 title: SimpleControlPanel API
 ---
+
+The `SimpleControlPanel` is a basic animation playback user interface.
+
+It is intended for use in the `panel` property of the `Controller`, where it is rendered by default.
+The `SimpleControlPanel` is unstyled; its purpose is to be an effortless demo component that can be replaced with a more aesthetically pleasing panel later.
+
+## Import
+
+```js
+import { SimpleControlPanel } from "react-ensemble";
+```
+
+## Interface
+
+`SimpleControlPanel` is a React component.
+
+```ts
+const SimpleControlPanel: React.FC<ControlPanelProps>;
+```
+
+## Props
+
+- Type: [`ControlPanelProps`](/docs/api/types#controlpanelprops)
+
+See [`ControlPanelProps`](/docs/api/types#controlpanelprops).
+
+## Playground
+
+```jsx live startHidden
+() => {
+  const [tick, setTick] = React.useState(0);
+  const [playing, setPlaying] = React.useState(false);
+  const [direction, setDirection] = React.useState(Direction.Normal);
+
+  // Note: You most likely wouldn't ever render SimpleControlPanel
+  // directly like this. Controller manages all these props in a
+  // similar way when you use SimpleControlPanel as its panel prop.
+  // See the Controller API docs for more information.
+  return (
+    <SimpleControlPanel
+      tick={tick}
+      length={1000}
+      playing={playing}
+      direction={direction}
+      setTick={t => setTick(t)}
+      play={() => setPlaying(true)}
+      pause={() => setPlaying(false)}
+      fastForward={() =>
+        setDirection(prev =>
+          prev === Direction.FastForward
+            ? Direction.Normal
+            : Direction.FastForward
+        )
+      }
+      reverse={() =>
+        setDirection(prev =>
+          prev === Direction.Reverse ? Direction.Normal : Direction.Reverse
+        )
+      }
+    />
+  );
+};
+```

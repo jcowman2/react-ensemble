@@ -12,7 +12,53 @@ The type definitions in this file are considered part of React Ensemble's public
 
 ## ControlPanelProps
 
+Includes all the data necessary to render a responsive playback control with play/pause, fast-forward, reverse, and progress bar features.
+
+```ts
+interface ControlPanelProps {
+  tick: number;
+  length: number | null;
+  playing: boolean;
+  direction: Direction;
+  setTick: (tick: number) => void;
+  play: () => void;
+  pause: () => void;
+  fastForward: () => void;
+  reverse: () => void;
+}
+```
+
+Used primarily by `Controller` to communicate with its `panel` prop, which is `SimpleControlPanel` by default.
+
+| Property    | Type                      | Description                                                  |
+| ----------- | ------------------------- | ------------------------------------------------------------ |
+| tick        | `number`                  | The track's time position (in milliseconds).                 |
+| length      | `number` or `null`        | The length of the animation (in milliseconds).               |
+| playing     | `boolean`                 | Whether the animation is playing.                            |
+| direction   | [`Direction`](#direction) | The mode of playback.                                        |
+| setTick     | `(tick: number) => void`  | Callback to signal a manual tick change.                     |
+| play        | `() => void`              | Callback to signal a manual play.                            |
+| pause       | `() => void`              | Callback to signal a manual pause.                           |
+| fastForward | `() => void`              | Callback to signal a manual fast-forward toggle (on or off). |
+| reverse     | `() => void`              | Callback to signal a manual reverse toggle (on or off).      |
+
 ## Direction
+
+Enumeration of all possible playback modes in a `Controller`.
+
+```ts
+enum Direction {
+  Normal,
+  FastForward,
+  Reverse
+}
+```
+
+| Value                   | Description                                                                                                    |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `Direction.Normal`      | The animation is playing forwards at normal speed.                                                             |
+| `Direction.FastForward` | The animation is playing forwards at a faster speed. The exact rate is configured by `Controller`.             |
+| `Direction.Reverse`     | The animation is playing backwards, sometimes at a faster speed. The exact rate is configured by `Controller`. |
 
 ## EasingFunction
 

@@ -3,7 +3,14 @@ import React from "react";
 import { jsx, Container, Button, Text } from "theme-ui";
 import prismTheme from "../theme/prism-react-renderer";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-import { Controller, Timeline, Lib, TrackUtils } from "react-ensemble";
+import {
+  Controller,
+  Timeline,
+  Lib,
+  TrackUtils,
+  SimpleControlPanel,
+  Direction
+} from "react-ensemble";
 
 export interface PlaygroundProps {
   code: string;
@@ -18,7 +25,14 @@ const Playground: React.FC<PlaygroundProps> = props => {
   return (
     <LiveProvider
       code={code}
-      scope={{ Controller, Timeline, Lib, TrackUtils }}
+      scope={{
+        Controller,
+        Timeline,
+        Lib,
+        TrackUtils,
+        SimpleControlPanel,
+        Direction
+      }}
       theme={prismTheme}
     >
       <LiveError />
