@@ -14,12 +14,14 @@ import {
   ControlPanelProps
 } from "./components/Controller/controller.types";
 
+import SimpleControlPanel from "./components/SimpleControlPanel/SimpleControlPanel";
+
 import * as TrackUtils from "./utils/TrackUtils/trackUtils";
 
 const Lib = { d3Ease, d3Interpolate };
 
 // Modules
-export { Timeline, Controller, TrackUtils, Lib };
+export { Timeline, Controller, SimpleControlPanel, TrackUtils, Lib };
 
 // Enums
 export { Direction };
