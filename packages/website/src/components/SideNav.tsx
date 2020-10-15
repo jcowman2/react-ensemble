@@ -41,17 +41,14 @@ export interface SideNavProps {
 const SideNav: React.FC<SideNavProps> = props => {
   const { menuOpen, setMenuOpen } = props;
 
-  const nav = React.useRef(null);
-
   return (
     <Location>
       {({ location }) => (
         <div
-          ref={nav}
           role="navigation"
-          onFocus={() => {
-            setMenuOpen(true);
-          }}
+          // onFocus={() => {
+          //   setMenuOpen(true);
+          // }}
           onBlur={() => {
             setMenuOpen(false);
           }}
@@ -72,7 +69,8 @@ const SideNav: React.FC<SideNavProps> = props => {
               a: makeLinkWrapper(location)
             }}
             sx={{
-              px: 3,
+              pl: 3,
+              pr: [3, 0, 0],
               pt: 3,
               pb: 4,
               mr: 5
