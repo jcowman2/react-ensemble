@@ -47,6 +47,13 @@ export default merge(preset, {
     }
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],
+  buttons: {
+    info: {
+      color: "text",
+      backgroundColor: "codeBg",
+      fontFamily: "body"
+    }
+  },
   styles: {
     a: {
       textDecoration: "none",
