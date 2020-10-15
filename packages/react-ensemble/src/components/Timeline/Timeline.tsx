@@ -134,6 +134,12 @@ export interface TimelineProps<State extends object = any> {
   onLoad?: (event: LoadEvent<State>) => void;
 }
 
+/**
+ * The `Timeline` component is the engine that builds an animation and calculates each frame's state in real time.
+ *
+ * It manages an `Animation` instance generated with `TrackUtils.gen` and automatically queries frames based on its given time value.
+ * `Timeline` may be configured to periodically update the time value via `setInterval`, or the time value may be controlled elsewhere.
+ */
 const Timeline = <State extends object = any>(
   props: React.PropsWithChildren<TimelineProps<State>>
 ): null => {

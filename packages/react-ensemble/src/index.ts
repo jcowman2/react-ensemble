@@ -9,7 +9,10 @@ import {
 } from "./components/Timeline/timeline.types";
 
 import Controller from "./components/Controller/Controller";
-import { Direction } from "./components/Controller/controller.types";
+import {
+  Direction,
+  ControlPanelProps
+} from "./components/Controller/controller.types";
 
 import * as TrackUtils from "./utils/TrackUtils/trackUtils";
 
@@ -22,4 +25,4 @@ export { Timeline, Controller, TrackUtils, Lib };
 export { Direction };
 
 // Types
-export { TimelineProps, TickEvent, UpdateEvent, LoadEvent };
+export { TimelineProps, TickEvent, UpdateEvent, LoadEvent, ControlPanelProps };
