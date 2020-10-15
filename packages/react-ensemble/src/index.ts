@@ -25,4 +25,10 @@ export { Timeline, Controller, TrackUtils, Lib };
 export { Direction };
 
 // Types
-export { TimelineProps, TickEvent, UpdateEvent, LoadEvent, ControlPanelProps };
+export type {
+  TimelineProps,
+  TickEvent,
+  UpdateEvent,
+  LoadEvent,
+  ControlPanelProps
+};
