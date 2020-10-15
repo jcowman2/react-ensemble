@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble@0.3.0...react-ensemble@0.4.0) (2020-10-15)
+
+
+### Code Refactoring
+
+* **react-ensemble:** drop the 'I' prefix from all interfaces ([71cd693](https://github.com/jcowman2/react-ensemble/commit/71cd69312234de1ce9311cf58dc0b519a499324d))
+
+
+### BREAKING CHANGES
+
+* **react-ensemble:** Many interfaces were renamed.
+
+
+
+
+
 # [0.3.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble@0.2.0...react-ensemble@0.3.0) (2020-10-14)
 
 

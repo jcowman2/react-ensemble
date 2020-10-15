@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.4.0...react-ensemble-website@0.5.0) (2020-10-15)
+
+
+### Bug Fixes
+
+* **website:** fix SideNav focus bug ([36a81c6](https://github.com/jcowman2/react-ensemble/commit/36a81c6e57a778dc7ec6326d62aa57e9cfd40231))
+
+
+### Code Refactoring
+
+* **react-ensemble:** drop the 'I' prefix from all interfaces ([71cd693](https://github.com/jcowman2/react-ensemble/commit/71cd69312234de1ce9311cf58dc0b519a499324d))
+
+
+### Features
+
+* **website:** add docs pagination ([e8b4a91](https://github.com/jcowman2/react-ensemble/commit/e8b4a9128f5a3a7ef986523026ff0b501b89ab3d))
+* **website:** add mobile docs navigation ([ea0a4f8](https://github.com/jcowman2/react-ensemble/commit/ea0a4f85b335e1ece87a6bd300f82a0b5755ef9a))
+
+
+### BREAKING CHANGES
+
+* **react-ensemble:** Many interfaces were renamed.
+
+
+
+
+
 # [0.4.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.3.0...react-ensemble-website@0.4.0) (2020-10-14)
 
 
