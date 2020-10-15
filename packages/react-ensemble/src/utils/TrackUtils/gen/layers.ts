@@ -1,7 +1,7 @@
 import _groupBy from "lodash.groupby";
 // @ts-ignore
 import alphanumSort from "alphanum-sort";
-import { ITrackRegion, ITrackRegionAtom } from "../trackUtils.types";
+import { TrackRegion, TrackRegionAtom } from "../trackUtils.types";
 
 export const DEFAULT_LAYER = "_default";
 
@@ -10,10 +10,10 @@ const namespaceLayer = (layerName: string, rootLayer: string) => {
 };
 
 export const separateLayers = <State extends object>(
-  track: ITrackRegion<State>[],
+  track: TrackRegion<State>[],
   rootLayer = ""
 ): {
-  layers: Record<string, ITrackRegion<State>[]>;
+  layers: Record<string, TrackRegion<State>[]>;
   layerRanks: Record<string, number>;
 } => {
   const defaultLayerName = namespaceLayer(DEFAULT_LAYER, rootLayer);
@@ -27,7 +27,7 @@ export const separateLayers = <State extends object>(
 
   const layers = _groupBy(trackWithLayers, "layer") as Record<
     string,
-    ITrackRegion<State>[]
+    TrackRegion<State>[]
   >;
   const layerNames = alphanumSort(Object.keys(layers)) as string[];
 
@@ -37,7 +37,7 @@ export const separateLayers = <State extends object>(
   // If no regions exist, add an empty region at the default layer
   if (!Object.keys(layers).length) {
     layerRanks[defaultLayerName] = 0;
-    const defaultRegion: ITrackRegionAtom<State> = {
+    const defaultRegion: TrackRegionAtom<State> = {
       start: 0,
       duration: 0,
       layer: defaultLayerName

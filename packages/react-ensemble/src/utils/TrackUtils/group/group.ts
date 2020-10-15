@@ -1,13 +1,13 @@
 import { isArray } from "../helpers";
 import {
-  ITrackRegionGroup,
+  TrackRegionGroup,
   TrackRegionSingleOrArray
 } from "../trackUtils.types";
 
 export const group = <State extends object>(
   regions: TrackRegionSingleOrArray<State>,
-  config: Omit<ITrackRegionGroup<State>, "regions"> = {}
-): ITrackRegionGroup<State> => {
+  config: Omit<TrackRegionGroup<State>, "regions"> = {}
+): TrackRegionGroup<State> => {
   return {
     ...config,
     regions: isArray(regions) ? regions : [regions]

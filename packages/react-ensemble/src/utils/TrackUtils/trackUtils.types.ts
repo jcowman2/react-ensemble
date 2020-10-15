@@ -1,29 +1,29 @@
-interface ITrackRegionBase {
+interface TrackRegionBase {
   start?: number;
   end?: number;
   easing?: EasingFunction | null;
   interp?: InterpolationFunction | null;
   layer?: string;
-  loop?: ILoopConfig | boolean;
+  loop?: LoopConfig | boolean;
 }
 
-export interface ITrackRegionAtom<State extends object = any>
-  extends ITrackRegionBase {
+export interface TrackRegionAtom<State extends object = any>
+  extends TrackRegionBase {
   duration?: number;
   state?: RegionState<State>;
 }
 
-export interface ITrackRegionGroup<State extends object = any>
-  extends ITrackRegionBase {
-  regions: ITrackRegion<State>[];
+export interface TrackRegionGroup<State extends object = any>
+  extends TrackRegionBase {
+  regions: TrackRegion<State>[];
   relativeTime?: boolean;
 }
 
-export type ITrackRegion<State extends object = any> =
-  | ITrackRegionAtom<State>
-  | ITrackRegionGroup<State>;
+export type TrackRegion<State extends object = any> =
+  | TrackRegionAtom<State>
+  | TrackRegionGroup<State>;
 
-export interface ICalculatedTrackRegion<State extends object = any> {
+export interface CalculatedTrackRegion<State extends object = any> {
   id: string;
   activeVars: Set<keyof State>;
   get: (current: number) => State;
@@ -32,7 +32,7 @@ export interface ICalculatedTrackRegion<State extends object = any> {
   layer: string;
 }
 
-export interface ILoopConfig {
+export interface LoopConfig {
   boomerang?: boolean;
   count?: number;
   until?: number;
@@ -52,32 +52,40 @@ export type RegionStateProperty<T> = {
   set?: T | ((previous: T) => T);
 };
 
+/**
+ * Describes how the engine will calculate frame states for time values greater than the length of the animation.
+ *
+ * - `"stop"`: Time will be clamped to the length of the animation. Gives the impression of the animation pausing once its finished.
+ * - `"continue"`: Time will continue to increase. Passive loops will continue to run indefinitely.
+ * - `"loop"`: Time will reset back to the start of the animation. Gives the impression of the animation looping.
+ * - `"boomerang"`: Time will be transformed so the animation appears to run backwards after it completes, then start over.
+ */
 export type TimelineEndBehavior = "stop" | "continue" | "loop" | "boomerang";
 
 export type TrackLayerResolver<State extends object = any> = (
   stateKey: keyof State,
-  layers: IResolverLayerData<State[keyof State]>[]
+  layers: ResolverLayerData<State[keyof State]>[]
 ) => State[keyof State];
 
-export interface IResolverLayerData<T> {
+export interface ResolverLayerData<T> {
   name: string;
   rank: number;
   age: number;
   value: T;
 }
 
-export interface ITrackConfig<State extends object = any> {
+export interface TrackConfig<State extends object = any> {
   endBehavior?: TimelineEndBehavior;
   easing?: EasingFunction;
   interp?: InterpolationFunction;
   resolver?: TrackLayerResolver<State>;
 }
 
-export interface IAnimation<State extends object> {
+export interface Animation<State extends object> {
   length: number;
-  config: Required<ITrackConfig<State>>;
+  config: Required<TrackConfig<State>>;
   getFrameState(frame: number): State;
-  layers: Record<string, ICalculatedTrackRegion<State>[]>;
+  layers: Record<string, CalculatedTrackRegion<State>[]>;
   activeVars: Set<keyof State>;
 }
 
@@ -88,5 +96,5 @@ export interface TrackRegionContext {
 }
 
 export type TrackRegionSingleOrArray<State extends object = any> =
-  | ITrackRegion<State>
-  | ITrackRegion<State>[];
+  | TrackRegion<State>
+  | TrackRegion<State>[];

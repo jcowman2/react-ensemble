@@ -1,11 +1,7 @@
-import {
-  ITrackConfig,
-  ITrackRegionAtom,
-  RegionState
-} from "../trackUtils.types";
+import { TrackConfig, TrackRegionAtom, RegionState } from "../trackUtils.types";
 import { isFunction, isInterpolatable } from "../helpers";
 
-interface IInterpolateStateResult<State> {
+interface InterpolateStateResult<State> {
   progress: number;
   state: State;
 }
@@ -13,11 +9,11 @@ interface IInterpolateStateResult<State> {
 /** Builds an atomic state interpolator ;) */
 export const buildAtomicStateInterpolator = <State extends object>(
   region: Pick<
-    Required<ITrackRegionAtom<State>>,
+    Required<TrackRegionAtom<State>>,
     "easing" | "interp" | "start" | "duration" | "state"
   >,
-  config: Required<ITrackConfig<State>>
-): ((current: number) => IInterpolateStateResult<State>) => {
+  config: Required<TrackConfig<State>>
+): ((current: number) => InterpolateStateResult<State>) => {
   const easingFn = region.easing ?? config.easing;
   const interpFn = region.interp ?? config.interp;
 

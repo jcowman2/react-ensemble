@@ -4,7 +4,7 @@ export enum Direction {
   Reverse
 }
 
-export interface IControlPanelProps {
+export interface ControlPanelProps {
   tick: number;
   length: number | null;
   playing: boolean;

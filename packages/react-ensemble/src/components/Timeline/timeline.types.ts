@@ -1,17 +1,25 @@
-import { IAnimation } from "../../utils/TrackUtils/trackUtils.types";
+import { Animation } from "../../utils/TrackUtils/trackUtils.types";
 
 /**
- * Event returned by `Timeline` on each tick
+ * Event payload returned by `Timeline` on each tick.
  */
-export interface ITickEvent {
-  /** The track's time position (in ms) */
+export interface TickEvent {
+  /** The track's time position (in milliseconds). */
   value: number;
 }
 
-export interface IUpdateEvent<State extends object = any> {
+/**
+ * Event payload returned by `Timeline` every time its time value updates.
+ */
+export interface UpdateEvent<State extends object = any> {
+  /** The animation's frame state at the time the event was generated. */
   state: State;
 }
 
-export interface ILoadEvent<State extends object = any> {
-  animation: IAnimation<State>;
+/**
+ * Event payload returned by `Timeline` when it finishes initializing the animation.
+ */
+export interface LoadEvent<State extends object = any> {
+  /** The generated animation. */
+  animation: Animation<State>;
 }

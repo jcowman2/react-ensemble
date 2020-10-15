@@ -1,0 +1,133 @@
+---
+title: Controller API
+---
+
+The `Controller` component is an optional wrapper for the `Timeline` that automatically configures time and playback controls.
+
+It can manage the `Timeline` invisibly (for instance, if you want your animation to play automatically), but the `Controller` also provides an animation playback UI that works without any configuration.
+You can replace this playback control UI with custom elements as well.
+
+## Import
+
+```js
+import { Controller } from "react-ensemble";
+```
+
+## Interface
+
+`Controller` is a React component.
+
+```ts
+const Controller = <State extends object = any>(
+  props: ControllerProps<State>
+): JSX.Element | null;
+```
+
+## Props
+
+- Type: `ControllerProps<State extends object = any>`
+- The optional generic type parameter `State` refers to the structure of the animation's state. Must be an object.
+
+Properties for the `Controller` component.
+
+```ts
+interface ControllerProps<State extends object = any> {
+  children: (
+    controlProps: Pick<
+      TimelineProps<State>,
+      "value" | "playing" | "playbackSpeed" | "onTick" | "onEnded" | "onLoad"
+    >
+  ) => JSX.Element;
+  visible?: boolean;
+  trigger?: "manual" | "auto";
+  normalPlaybackSpeed?: number;
+  fastForwardModifier?: number;
+  reverseModifier?: number;
+  panelStyle?: object;
+  panel?: (props: ControlPanelProps) => JSX.Element;
+}
+```
+
+### children
+
+- Type: `(controlProps: Pick<TimelineProps<State>, ...>) => JSX.Element`
+- **Required**
+
+Provides a subset of configured [`TimelineProps`](/docs/api/timeline#props) that can be used to manage a `Timeline` automatically.
+
+The configured props include:
+
+- `value`
+- `playing`
+- `playbackSpeed`
+- `onTick`
+- `onEnded`
+- `onLoad`
+
+`Controller` will configure the value of these timeline properties based on its own props, including `trigger`, `normalPlaybackSpeed`, and `panel`.
+
+This type of prop is called a **render prop** because the `Controller` uses it to know what to render. Use it by putting a function in between your `<Controller>` tags:
+
+```jsx
+<Controller>
+  {props => (
+    <Timeline {...props} track={myTrack} defaultState={myDefaultState} />
+  )}
+</Controller>
+```
+
+### visible
+
+- Type: `boolean`
+- Default: `true`
+
+Whether the playback `panel` is visible.
+
+### trigger
+
+- Type: `"manual" | "auto"`
+- Default: `"manual"`
+
+Whether the configured `Timeline` should play automatically or wait for a manual trigger.
+
+### normalPlaybackSpeed
+
+- Type: `number`
+- Default: `1`
+
+The `playbackSpeed` to pass to the configured `Timeline` via the `children` render prop when the `panel` is in normal playback mode.
+
+### fastForwardModifier
+
+- Type: `number`
+- Default: `2`
+
+Is multiplied with `normalPlaybackSpeed` to calculate the `playbackSpeed` passed to the configured `Timeline` when the `panel` is in fast-forward playback mode.
+
+### reverseModifier
+
+- Type: `number`
+- Default: `-2`
+
+Is multiplied with `normalPlaybackSpeed` to calculate the `playbackSpeed` passed to the configured `Timeline` when the `panel` is in reverse playback mode.
+
+### panelStyle
+
+- Type: `object`
+- Default: `{}`
+
+The CSS style object passed to the `<div>` that contains the `panel`.
+
+This prop is best suited for minor style adjustments. For more granular control over the panel's appearance, override the `panel` prop instead.
+
+### panel
+
+- Type: `(props: ControlPanelProps) => JSX.Element;`
+- Default [`SimpleControlPanel`](/docs/api/simplecontrolpanel)
+
+Renders a generic playback control panel for an animation based on props configured by `Controller` and its managed `Timeline`.
+
+Provides all the data necessary to render a responsive playback control with play/pause, fast-forward, reverse, and progress bar features.
+Includes both current information about the managed `Timeline` and a suite of callback functions to control it. See [`ControlPanelProps`](/docs/api/types#controlpanelprops).
+
+Will render a basic, unstyled control panel by default intended for demo purposes. See [`SimpleControlPanel`](/docs/api/simplecontrolpanel).

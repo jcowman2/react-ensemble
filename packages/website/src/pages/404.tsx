@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 /** @jsx jsx */
 import { jsx, Container, Text, Styled } from "theme-ui";
 import Layout from "../components/Layout";

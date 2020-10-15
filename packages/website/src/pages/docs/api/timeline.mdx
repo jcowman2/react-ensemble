@@ -1,3 +1,201 @@
 ---
-title: Timeline
+title: Timeline API
 ---
+
+The `Timeline` component is the engine that builds an animation and calculates each frame's state in real time.
+
+It manages an `Animation` instance generated with `TrackUtils.gen` and automatically queries frames based on its given time value.
+`Timeline` may be configured to periodically update the time value via `setInterval`, or the time value may be controlled elsewhere.
+
+## Import
+
+```js
+import { Timeline } from "react-ensemble";
+```
+
+## Interface
+
+`Timeline` is a React component.
+
+```ts
+const Timeline: <State extends object = any>(
+  props: React.PropsWithChildren<TimelineProps<State>>
+) => null;
+```
+
+## Props
+
+- Type: `TimelineProps<State extends object = any>`
+- The optional generic type parameter `State` refers to the structure of the animation's state. Must be an object.
+
+Properties for the `Timeline` component.
+
+```ts
+interface TimelineProps<State extends object = any> {
+  track: TrackRegion<State>[];
+  defaultState: State;
+  value: number;
+  playing: boolean;
+  playbackSpeed?: number;
+  interval?: number;
+  endBehavior?: TimelineEndBehavior;
+  easing?: EasingFunction;
+  interp?: InterpolationFunction;
+  resolver?: TrackLayerResolver<State>;
+  onTick?: (event: TickEvent) => void;
+  onUpdate?: (event: UpdateEvent<State>) => void;
+  onEnded?: () => void;
+  onLoad?: (event: LoadEvent<State>) => void;
+}
+```
+
+### track
+
+- Type: [`TrackRegion<State>[]`](/docs/api/types#trackregion)
+- **Required**
+
+The array of regions that make up the animation.
+
+`track` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
+After `Timeline` initializes, it will not re-calculate the animation if `track` changes.
+
+### defaultState
+
+- Type: `State`
+- **Required**
+
+The animation's default state. Must be an object.
+
+`defaultState` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
+After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes.
+
+### value
+
+- Type: `number`
+- **Required**
+
+The current frame of the animation, in milliseconds.
+
+Changing this prop triggers a refresh within `Timeline` that queries the animation and returns the current frame state via `onUpdate` asynchronously.
+
+### playing
+
+- Type: `boolean`
+- **Required**
+
+Whether the animation is playing.
+
+While true, the interval within `Timeline` will run (as specified by the `interval` prop) and trigger `onTick` callbacks.
+
+### playbackSpeed
+
+- Type: `number`
+- Default: `1`
+
+The timeline's playback speed multiplier.
+
+`1` plays the animation at regular speed, `2` plays at double speed, `0.5` plays at half speed, etc.
+Supply a negative number to play in reverse. For example, `-2` plays backwards at double speed.
+
+### interval
+
+- Type: `number`
+- Default: `10`
+
+The number of milliseconds the interval within `Timeline` will be set to, roughly corresponding to how often `onTick` callbacks will be triggered.
+
+This property implies a performance versus quality tradeoff: larger intervals will refresh the frame less frequently,
+causing choppier animations but using less resources, whereas smaller intervals will have smaller gaps between refreshes but a greater performance cost.
+
+**This property is an approximation**, and will not match exactly with the values returned by `onTick`.
+There are unavoidable (but minor) delays caused by querying the animation object and React renders, so expect less precision at the millisecond level.
+
+### endBehavior
+
+- Type: [`TimelineEndBehavior`](/docs/api/types#timelineendbehavior)
+- Default: `"stop"`
+
+Describes how the engine will calculate frame states for time values greater than the length of the animation.
+
+### easing
+
+- Type: [`EasingFunction`](/docs/api/types#easingfunction)
+- Default: `undefined`
+
+Sets the animation's default [easing function](/docs/guides/easing-and-interpolating#easing).
+
+If not defined, [`TrackUtils.gen`](/docs/api/trackutils#gen) will use its own default easing function.
+
+### interp
+
+- Type: [`InterpolationFunction`](/docs/api/types#interpolationfunction)
+- Default: `undefined`
+
+Sets the animation's default [interpolation function](/docs/guides/easing-and-interpolating#interpolating).
+
+If not defined, [`TrackUtils.gen`](/docs/api/trackutils#gen) will use its own default interpolation function.
+
+### resolver
+
+- Type: [`TrackLayerResolver<State>`](/docs/api/types#tracklayerresolver)
+- Default: `undefined`
+
+Sets the animation's default [layer resolver](/docs/guides/layers-and-groups#layer-resolution).
+
+If not defined, [`TrackUtils.gen`](/docs/api/trackutils#gen) will use its own default layer resolver.
+
+### onTick
+
+- Type: `(event: TickEvent) => void`
+- Default: `() => {}`
+
+If `playing` is true, this callback will fire approximately every `interval`.
+
+`event.value` will be equal to the time value when the event was created.
+See [`TickEvent`](/docs/api/types#tickevent).
+
+Useful if a parent component is storing the animation's time value as state:
+
+```jsx
+onTick={({ value }) => setTick(value)}
+```
+
+### onUpdate
+
+- Type: `(event: UpdateEvent<State>) => void`
+- Default: `() => {}`
+
+Will fire with the current frame state according to `value` whenever `value` changes.
+
+See [`UpdateEvent`](/docs/api/types#updateevent).
+
+Useful if a parent component is storing the animation's frame state:
+
+```jsx
+onUpdate={({ state }) => setAnimState(state)}
+```
+
+### onEnded
+
+- Type: `() => void`
+- Default: `() => {}`
+
+Will fire when `value` is greater than or equal to the length of the track or when `value` is less than zero.
+
+May trigger more than once.
+
+### onLoad
+
+- Type: `(event: LoadEvent<State>) => void`
+- Default: `() => {}`
+
+Will fire when `Timeline` initializes, returning the `Animation` calculated by `TrackUtils.gen()`.
+
+See [`LoadEvent`](/docs/api/types#loadevent).
+
+`Timeline` will initialize when it is mounted and whenever the following props change:
+
+- `endBehavior`
+- `easing`
+- `interp`
+- `resolver`
