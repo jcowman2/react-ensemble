@@ -19,33 +19,118 @@ export const TIMELINE_DEFAULTS = {
   onLoad: () => {}
 };
 
+/**
+ * Properties for the `Timeline` component.
+ * @param State refers to the structure of the animation's state. Must be an object.
+ */
 export interface TimelineProps<State extends object = any> {
+  /**
+   * The array of regions that make up the animation.
+   *
+   * `track` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
+   * After `Timeline` initializes, it will not re-calculate the animation if `track` changes.
+   */
   track: TrackRegion<State>[];
+
+  /**
+   * The animation's default state. Must be an object.
+   *
+   * `defaultState` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
+   * After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes.
+   */
   defaultState: State;
 
+  /**
+   * The current frame of the animation, in milliseconds.
+   *
+   * Changing this prop triggers a refresh within `Timeline` that queries the animation and returns the current frame state via `onUpdate` asynchronously.
+   */
   value: number;
+
+  /**
+   * Whether the animation is playing.
+   *
+   * While true, the interval within `Timeline` will run (as specified by the `interval` prop) and trigger `onTick` callbacks.
+   */
   playing: boolean;
 
   /**
-   * The timeline's playback speed multiplier. `1` (default) will play the animation at regular speed,
-   * `2` will play at double speed, `0.5` will play at half speed, etc.
+   * The timeline's playback speed multiplier.
    *
+   * `1` (default) will play the animation at regular speed, `2` will play at double speed, `0.5` will play at half speed, etc.
    * Supply a negative number to play in reverse. For example, `-2` would play backwards at double speed.
+   *
    * @default 1
    */
   playbackSpeed?: number;
-  /** @default 10 */
+
+  /**
+   * The number of milliseconds the interval within `Timeline` will be set to, roughly corresponding to how often `onTick` callbacks will be triggered.
+   *
+   * This property implies a performance versus quality tradeoff: larger intervals will refresh the frame less frequently,
+   * causing choppier animations but using less resources, whereas smaller intervals will have smaller gaps between refreshes but a greater performance cost.
+   *
+   * **This property is an approximation**, and will not match exactly with the values returned by `onTick`.
+   * There are unavoidable (but minor) delays caused by querying the animation object and React renders, so expect less precision at the millisecond level.
+   *
+   * @default 10
+   */
   interval?: number;
-  /** @default "stop" */
+
+  /**
+   * Describes how the engine will calculate frame states for time values greater than the length of the animation.
+   *
+   * @default "stop"
+   */
   endBehavior?: TimelineEndBehavior;
 
+  /**
+   * Sets the animation's default easing function.
+   *
+   * If not defined, `TrackUtils.gen` will use its own default easing function.
+   */
   easing?: EasingFunction;
+
+  /**
+   * Sets the animation's default interpolation function.
+   *
+   * If not defined, `TrackUtils.gen` will use its own default interpolation function.
+   */
   interp?: InterpolationFunction;
+
+  /**
+   * Sets the animation's default layer resolver.
+   *
+   * If not defined, `TrackUtils.gen` will use its own default layer resolver.
+   */
   resolver?: TrackLayerResolver<State>;
 
+  /**
+   * If `playing` is true, this callback will fire approximately every `interval`.
+   *
+   * `event.value` will be equal to the time value when the event was created.
+   *
+   * Useful if a parent component is storing the animation's time value as state.
+   */
   onTick?: (event: TickEvent) => void;
+
+  /**
+   * Will fire with the current frame state according to `value` whenever `value` changes.
+   *
+   * Useful if a parent component is storing the animation's frame state.
+   */
   onUpdate?: (event: UpdateEvent<State>) => void;
+
+  /**
+   * Will fire when `value` is greater than or equal to the length of the track or when `value` is less than zero.
+   *
+   * May trigger more than once.
+   */
   onEnded?: () => void;
+
+  /**
+   * Will fire when `Timeline` initializes, returning the `Animation` calculated by `TrackUtils.gen()`.
+   */
   onLoad?: (event: LoadEvent<State>) => void;
 }
 
@@ -77,8 +162,6 @@ const Timeline = <State extends object = any>(
   const [lastTime, setLastTime] = React.useState<number | null>(null);
   const [hasEnded, setHasEnded] = React.useState(false);
 
-  // const isReverse = playbackSpeed < 0;
-
   /** Generate animation */
   React.useEffect(() => {
     if (!hasInit) {
@@ -106,7 +189,7 @@ const Timeline = <State extends object = any>(
   /** Re-init animation when config changes */
   React.useEffect(() => {
     setHasInit(false);
-  }, [endBehaviorProp, easing, interp]);
+  }, [endBehaviorProp, easing, interp, resolver]);
 
   /** Set interval */
   React.useEffect(() => {

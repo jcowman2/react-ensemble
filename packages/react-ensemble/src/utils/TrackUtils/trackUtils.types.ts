@@ -52,6 +52,14 @@ export type RegionStateProperty<T> = {
   set?: T | ((previous: T) => T);
 };
 
+/**
+ * Describes how the engine will calculate frame states for time values greater than the length of the animation.
+ *
+ * - `"stop"`: Time will be clamped to the length of the animation. Gives the impression of the animation pausing once its finished.
+ * - `"continue"`: Time will continue to increase. Passive loops will continue to run indefinitely.
+ * - `"loop"`: Time will reset back to the start of the animation. Gives the impression of the animation looping.
+ * - `"boomerang"`: Time will be transformed so the animation appears to run backwards after it completes, then start over.
+ */
 export type TimelineEndBehavior = "stop" | "continue" | "loop" | "boomerang";
 
 export type TrackLayerResolver<State extends object = any> = (

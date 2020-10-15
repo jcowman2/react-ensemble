@@ -1,0 +1,76 @@
+---
+title: Type Definitions API
+---
+
+React Ensemble is written in TypeScript.
+Although you can use the library freely with JavaScript, the structure of your application's inputs will be expected to match certain types.
+Therefore, referencing the type definitions can be useful even for JavaScript developers.
+
+The type definitions in this file are considered part of React Ensemble's public API.
+
+## Animation
+
+## EasingFunction
+
+## InterpolationFunction
+
+## LoadEvent
+
+Event payload returned by `Timeline` when it finishes initializing the animation.
+
+```ts
+interface LoadEvent<State extends object = any> {
+  animation: Animation<State>;
+}
+```
+
+| Property  | Type                             | Description              |
+| --------- | -------------------------------- | ------------------------ |
+| animation | [`Animation<State>`](#animation) | The generated animation. |
+
+## TickEvent
+
+Event payload returned by `Timeline` on each tick.
+
+```ts
+interface TickEvent {
+  value: number;
+}
+```
+
+| Property | Type     | Description                                  |
+| -------- | -------- | -------------------------------------------- |
+| value    | `number` | The track's time position (in milliseconds). |
+
+## TimelineEndBehavior
+
+Describes how the engine will calculate frame states for time values greater than the length of the animation.
+
+```ts
+type TimelineEndBehavior = "stop" | "continue" | "loop" | "boomerang";
+```
+
+| Value         | Description                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `"stop"`      | Time will be clamped to the length of the animation. Gives the impression of the animation pausing once its finished. |
+| `"continue"`  | Time will continue to increase. Passive loops will continue to run indefinitely.                                      |
+| `"loop"`      | Time will reset back to the start of the animation. Gives the impression of the animation looping.                    |
+| `"boomerang"` | Time will be transformed so the animation appears to run backwards after it completes, then start over.               |
+
+## TrackLayerResolver
+
+## TrackRegion
+
+## UpdateEvent
+
+Event payload returned by `Timeline` every time its time value updates.
+
+```ts
+interface UpdateEvent<State extends object = any> {
+  state: State;
+}
+```
+
+| Property | Type    | Description                                                      |
+| -------- | ------- | ---------------------------------------------------------------- |
+| state    | `State` | The animation's frame state at the time the event was generated. |
