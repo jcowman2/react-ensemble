@@ -7,7 +7,7 @@ import {
   TrackLayerResolver
 } from "../trackUtils.types";
 import { genAnimation } from "./genAnimation";
-import { layerResolvers } from "../layerResolvers/layerResolvers";
+import * as layerResolvers from "../layerResolvers/layerResolvers";
 
 const applyConfigDefaults = <State extends object>(
   config: TrackConfig<State> = {}

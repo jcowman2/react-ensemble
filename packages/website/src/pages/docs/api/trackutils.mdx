@@ -2,7 +2,7 @@
 title: TrackUtils API
 ---
 
-The `TrackUtils` module contains contains utility functions related to manipulating and parsing animation tracks.
+The `TrackUtils` module contains contains utility functions related to building and parsing animation tracks.
 
 ## Import
 
@@ -107,7 +107,7 @@ Places one or more track regions into a single group.
 ```ts
 const group = <State extends object>(
   regions: TrackRegionSingleOrArray<State>,
-  config: Omit<TrackRegionGroup<State>, "regions"> = {}
+  config?: Omit<TrackRegionGroup<State>, "regions">
 ) => TrackRegionGroup<State>;
 ```
 
@@ -156,11 +156,10 @@ const layer = <State extends object>(
 
 ```jsx live startHidden
 () => {
-  const regions = TrackUtils.layer(1, {
-    start: 1000,
-    duration: 1000,
-    state: { x: { to: 10 } }
-  });
+  const regions = TrackUtils.layer(1, [
+    { start: 1000, duration: 1000, state: { x: { to: 10 } } },
+    { duration: 2000, state: { x: { to: 5 } }, loop: true }
+  ]);
   return (
     <div>
       <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
@@ -171,6 +170,114 @@ const layer = <State extends object>(
 
 ## layerResolvers
 
+Contains layer resolver functions—currently, only [`overrideLast`](#layerresolversoverridelast)—to be used by `gen` to calculate an animation's frame state getter.
+
+```ts
+const layerResolvers = {
+  overrideLast: TrackLayerResolver
+};
+```
+
+Layer resolvers are used to calculate the composite value for a single animation state property that exists in multiple track layers at the same time.
+When such a case arises, information about the layers that contain the state property are given to the animation's track layer resolver, and the output of the resolver is used as the state property's value for that frame.
+
+See the [Layer Resolution guide](/docs/guides/layers-and-groups#layer-resolution) or [`TrackLayerResolver` type definition](/docs/api/types#tracklayerresolver) for more information.
+
+### layerResolvers.overrideLast
+
+- Type: [`TrackLayerResolver`](/docs/api/types#tracklayerresolver)
+
+Selects the value candidate with the lowest age (least amount of time since it was last updated).
+
+If multiple candidates have the same age, the one with the highest layer rank will be used.
+Layer rank is calculated by alphanumerically sorting all layer names that exist in the track.
+
 ## loop
 
+Places one or more regions into a group with the specified loop configuration.
+
+```ts
+const loop = <State extends object>(
+  regions: TrackRegionSingleOrArray<State>,
+  config: boolean | number | LoopConfig
+): TrackRegionGroup<State>
+```
+
+| Parameter | Type                                                                | Description                                                                                                                                                                                      |
+| --------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| regions   | `TrackRegion` or `TrackRegion[]`                                    | The region or regions to be placed into the looping group.                                                                                                                                       |
+| config    | `boolean` or `number` or [`LoopConfig`](/docs/api/types#loopconfig) | If a `number`, the region will be configured to loop that number of times. Otherwise, the config passed here will be the group's `loop` property. See the [Looping guide](/docs/guides/looping). |
+
+- Returns: [`TrackRegionGroup<State>`](/docs/api/types#trackregiongroup)
+
+### loop -- Playground
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.loop(
+    [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    5
+  );
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
 ## multi
+
+Flattens a collection of tracks into a single group's track, with the regions from each sub-track on separate layers.
+
+```ts
+const multi = <State extends object>(
+  tracks:
+    | TrackRegionSingleOrArray<State>[]
+    | Record<string, TrackRegionSingleOrArray<State>>,
+  config?: Omit<TrackRegionGroup<State>, "regions">
+): TrackRegionGroup<State>
+```
+
+| Parameter | Type                                                                                                                        | Description                                                                                                                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| track     | Either: An array of `TrackRegion` and `TrackRegion[]`, _or_ an object with each value as a `TrackRegion` or `TrackRegion[]` | The tracks to be flattened. If a 2D array is passed, each track's new layer will be its index in the 2D array. If an object is passed, the key referring to each track will be used as the layer. |
+| config    | `Omit<TrackRegionGroup<State>, "regions">`                                                                                  | Any region properties to be applied to the finished group, excluding `regions`. (Optional)                                                                                                        |
+
+- Returns: [`TrackRegionGroup<State>`](/docs/api/types#trackregiongroup)
+
+This function is useful for assembling groups with multiple concurrent layers.
+
+### multi -- Playground
+
+If the input track is a list of lists/single regions, each layer name will be the index of the input sub-track:
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.multi([
+    [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    { start: 2000, state: { y: { to: 0 } } }
+  ]);
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+If the input track is a object where every value is a list or single region, each layer name will be the key of that group:
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.multi({
+    foo: [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    bar: { start: 2000, state: { y: { to: 0 } } }
+  });
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
