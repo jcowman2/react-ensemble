@@ -28,8 +28,6 @@ interface ControlPanelProps {
 }
 ```
 
-Used primarily by `Controller` to communicate with its `panel` prop, which is `SimpleControlPanel` by default.
-
 | Property    | Type                      | Description                                                  |
 | ----------- | ------------------------- | ------------------------------------------------------------ |
 | tick        | `number`                  | The track's time position (in milliseconds).                 |
@@ -41,6 +39,8 @@ Used primarily by `Controller` to communicate with its `panel` prop, which is `S
 | pause       | `() => void`              | Callback to signal a manual pause.                           |
 | fastForward | `() => void`              | Callback to signal a manual fast-forward toggle (on or off). |
 | reverse     | `() => void`              | Callback to signal a manual reverse toggle (on or off).      |
+
+Used primarily by `Controller` to communicate with its `panel` prop, which is `SimpleControlPanel` by default.
 
 ## Direction
 
@@ -107,9 +107,15 @@ type TimelineEndBehavior = "stop" | "continue" | "loop" | "boomerang";
 | `"loop"`      | Time will reset back to the start of the animation. Gives the impression of the animation looping.                      |
 | `"boomerang"` | Time will be transformed so the animation appears to run backwards after it completes, then start over.                 |
 
+## TrackConfig
+
 ## TrackLayerResolver
 
 ## TrackRegion
+
+## TrackRegionAtom
+
+## TrackRegionGroup
 
 ## UpdateEvent
 
