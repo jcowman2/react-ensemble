@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.5.0...react-ensemble-website@1.0.0) (2020-10-17)
+
+
+### Features
+
+* **website:** add footer ([ea12575](https://github.com/jcowman2/react-ensemble/commit/ea1257526856ad6bf136033d94d729cf12537a16))
+* **website:** add logo to site ([345b7e6](https://github.com/jcowman2/react-ensemble/commit/345b7e6f9565c3cba7443cd1126000f1fd0e28da))
+
+
+
+
+
 # [0.5.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble-website@0.4.0...react-ensemble-website@0.5.0) (2020-10-15)
 
 

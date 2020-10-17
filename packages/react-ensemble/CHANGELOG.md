@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble@0.4.0...react-ensemble@1.0.0) (2020-10-17)
+
+
+### Bug Fixes
+
+* **react-ensemble:** remove check if 'to' is interpolatable and account for regions that just ended ([5a44d3f](https://github.com/jcowman2/react-ensemble/commit/5a44d3f9071a7adb0cc9a51999c397424b1d6079))
+* **react-ensemble:** use export type to be compatible with Babel ([70fcfa9](https://github.com/jcowman2/react-ensemble/commit/70fcfa92fd17c0c0a2159c94132403140338ed24))
+
+
+### Features
+
+* **react-ensemble:** add SimpleControlPanel to public exports (and add API docs) ([8dd812f](https://github.com/jcowman2/react-ensemble/commit/8dd812f1b0d92c389c0409758d025c7321ad9c99))
+* **react-ensemble:** public exports for TrackUtils types ([fcb50cc](https://github.com/jcowman2/react-ensemble/commit/fcb50cc8022c704363b72dbd4751ee1613585d29))
+
+
+
+
+
 # [0.4.0](https://github.com/jcowman2/react-ensemble/compare/react-ensemble@0.3.0...react-ensemble@0.4.0) (2020-10-15)
 
 
