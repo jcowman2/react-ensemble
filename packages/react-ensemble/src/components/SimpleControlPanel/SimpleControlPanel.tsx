@@ -1,6 +1,13 @@
 import React from "react";
 import { ControlPanelProps, Direction } from "../Controller/controller.types";
 
+/**
+ * The `SimpleControlPanel` is a basic animation playback user interface.
+ *
+ * It is intended for use in the `panel` property of the `Controller`, where it is rendered by default.
+ * The `SimpleControlPanel` is unstyled; its purpose is to be an effortless demo component that can be
+ * replaced with a more aesthetically pleasing panel later.
+ */
 const SimpleControlPanel: React.FC<ControlPanelProps> = props => {
   const {
     tick,

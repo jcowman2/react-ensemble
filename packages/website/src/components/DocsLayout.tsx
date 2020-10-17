@@ -25,7 +25,7 @@ const DocsLayout: React.FC<{
             sx={{
               width: "100%",
               variant: "buttons.info",
-              mb: 3
+              mb: 4
             }}
           >
             Menu

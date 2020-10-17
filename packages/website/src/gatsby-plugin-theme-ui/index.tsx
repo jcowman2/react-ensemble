@@ -44,6 +44,10 @@ export default merge(preset, {
     hero: {
       fontSize: [4, 5, 6],
       fontFamily: "heading"
+    },
+    footnote: {
+      fontSize: 0,
+      fontFamily: "body"
     }
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],

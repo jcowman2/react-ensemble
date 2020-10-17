@@ -1,5 +1,5 @@
 import { TrackConfig, TrackRegionAtom, RegionState } from "../trackUtils.types";
-import { isFunction, isInterpolatable } from "../helpers";
+import { isFunction } from "../helpers";
 
 interface InterpolateStateResult<State> {
   progress: number;
@@ -23,7 +23,6 @@ export const buildAtomicStateInterpolator = <State extends object>(
     const local = Math.min(Math.max(current - start, 0), duration);
     const localNormalized = duration ? local / duration : 0;
     const eased = easingFn(localNormalized);
-    const atEnd = duration ? eased === 1 : true;
 
     const newState = {} as State;
 
@@ -39,11 +38,6 @@ export const buildAtomicStateInterpolator = <State extends object>(
         continue;
       }
 
-      if (!isInterpolatable(to)) {
-        newState[key] = !atEnd ? from! : to;
-        continue;
-      }
-      // @ts-ignore
       newState[key] = interpFn<State[typeof key]>(from!, to)(eased);
     }
     return { progress: eased, state: newState };

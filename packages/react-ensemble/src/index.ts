@@ -14,15 +14,66 @@ import {
   ControlPanelProps
 } from "./components/Controller/controller.types";
 
-import * as TrackUtils from "./utils/TrackUtils/trackUtils";
+import SimpleControlPanel from "./components/SimpleControlPanel/SimpleControlPanel";
 
-const Lib = { d3Ease, d3Interpolate };
+import * as TrackUtils from "./utils/TrackUtils/trackUtils";
+import {
+  Animation,
+  CalculatedTrackRegion,
+  EasingFunction,
+  InterpolationFunction,
+  LoopConfig,
+  RegionState,
+  RegionStateProperty,
+  ResolverLayerData,
+  TrackConfig,
+  TrackLayerResolver,
+  TrackRegion,
+  TrackRegionAtom,
+  TrackRegionGroup
+} from "./utils/TrackUtils/trackUtils.types";
+
+/** Contains external packages that are used frequently in animations. */
+const Lib = {
+  /**
+   * References the **d3-ease** library of easing functions.
+   *
+   * See the **d3-ease** documentation: https://github.com/d3/d3-ease/blob/master/README.md
+   */
+  d3Ease,
+
+  /**
+   * References the **d3-interpolate** library of interpolation functions.
+   *
+   * See the **d3-interpolate** documentation: https://github.com/d3/d3-interpolate/blob/master/README.md
+   */
+  d3Interpolate
+};
 
 // Modules
-export { Timeline, Controller, TrackUtils, Lib };
+export { Timeline, Controller, SimpleControlPanel, TrackUtils, Lib };
 
 // Enums
 export { Direction };
 
 // Types
-export { TimelineProps, TickEvent, UpdateEvent, LoadEvent, ControlPanelProps };
+export type {
+  TimelineProps,
+  ControlPanelProps,
+  TickEvent,
+  LoadEvent,
+  UpdateEvent,
+  Animation,
+  CalculatedTrackRegion,
+  EasingFunction,
+  InterpolationFunction,
+  LoopConfig,
+  RegionState,
+  RegionStateProperty,
+  ResolverLayerData,
+  TrackConfig,
+  TrackLayerResolver,
+  TrackRegion,
+  TrackRegionAtom,
+  TrackRegionGroup
+};

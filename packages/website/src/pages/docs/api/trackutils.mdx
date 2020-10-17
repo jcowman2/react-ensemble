@@ -1,3 +1,283 @@
 ---
-title: TrackUtils
+title: TrackUtils API
 ---
+
+The `TrackUtils` module contains contains utility functions related to building and parsing animation tracks.
+
+## Import
+
+```js
+import { TrackUtils } from "react-ensemble";
+```
+
+## Interface
+
+```ts
+TrackUtils = {
+  gen,
+  group,
+  layer,
+  layerResolvers,
+  loop,
+  multi
+};
+```
+
+## gen
+
+Parses an animation's track and configuration into a queryable `Animation` object.
+
+```ts
+const gen = <State extends object>(
+  track: TrackRegion<State>[],
+  defaults: State,
+  config?: TrackConfig<State>
+) => Animation<State>;
+```
+
+| Parameter | Type                                                  | Description                                       |
+| --------- | ----------------------------------------------------- | ------------------------------------------------- |
+| track     | [`TrackRegion<State>[]`](/docs/api/types#trackregion) | The array of regions that make up the animation.  |
+| defaults  | `State`                                               | The animation's default state.                    |
+| config    | [`TrackConfig<State>`](/docs/api/types#trackconfig)   | Various configuration for the computed animation. |
+
+- Returns: [`Animation<State>`](/docs/api/types#animation)
+
+**This function contains React Ensemble's core animation parsing engine.**
+
+`Timeline` calls `gen` internally to calculate its animation, but there may be instances where you would want to parse and query animations directly.
+
+Roughly, `gen` calculates an animation via these steps:
+
+1. Apply config defaults for values not provided.
+2. Separate track regions by layer.
+3. Validate regions layer-by-layer, creating a frame state getter function for each region based on its properties.
+4. When groups are encountered, calculate a sub-animation for each group recursively.
+5. Add every region to an interval tree, including data about each state property's activity.
+6. Build a frame state getter for the entire interval tree involving the configured layer resolver.
+7. Return the frame state getter function and assorted data via an `Animation` object.
+
+### gen -- Config Defaults
+
+The following default config properties will be used for every value of `config` not specified:
+
+| Property    | Default                                  |
+| ----------- | ---------------------------------------- |
+| endBehavior | `"stop"`                                 |
+| easing      | `Lib.d3Ease.easeCubic`                   |
+| interp      | `Lib.d3Interpolate.interpolate`          |
+| resolver    | `TrackUtils.layerResolvers.overrideLast` |
+
+### gen - Playground
+
+```jsx live startHidden
+() => {
+  const [tick, setTick] = React.useState("0");
+  const { getFrameState } = TrackUtils.gen(
+    [
+      { duration: 1000, state: { x: { to: 10 }, y: { to: 100 } } },
+      { duration: 500, state: { x: { to: 50 } }, loop: { boomerang: true } }
+    ],
+    { x: 0, y: 0 },
+    { easing: Lib.d3Ease.easeLinear, endBehavior: "continue" }
+  );
+  const frameState = getFrameState(Number(tick) || "0");
+
+  return (
+    <div>
+      <label for="tick" style={{ marginRight: 6 }}>
+        Tick
+      </label>
+      <input
+        id="tick"
+        name="tick"
+        value={tick}
+        onChange={e => setTick(e.target.value)}
+      />
+      <pre>Frame State: {JSON.stringify(frameState)}</pre>
+    </div>
+  );
+};
+```
+
+## group
+
+Places one or more track regions into a single group.
+
+```ts
+const group = <State extends object>(
+  regions: TrackRegionSingleOrArray<State>,
+  config?: Omit<TrackRegionGroup<State>, "regions">
+) => TrackRegionGroup<State>;
+```
+
+| Parameter | Type                                       | Description                                                                                |
+| --------- | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| regions   | `TrackRegion` or `TrackRegion[]`           | The region or regions to be grouped.                                                       |
+| config    | `Omit<TrackRegionGroup<State>, "regions">` | Any region properties to be applied to the finished group, excluding `regions`. (Optional) |
+
+- Returns: [`TrackRegionGroup<State>`](/docs/api/types#trackregiongroup)
+
+### group -- Playground
+
+```jsx live startHidden
+() => {
+  const region = TrackUtils.group(
+    [{ end: 2000, state: { x: { to: 10 } } }, { duration: 1000 }],
+    { loop: true }
+  );
+  return (
+    <div>
+      <pre>Generated Region: {JSON.stringify(region, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+## layer
+
+Returns one or more new regions with the given layer name.
+
+```ts
+const layer = <State extends object>(
+  layerName: string | number,
+  regions: TrackRegionSingleOrArray<State>
+) => TrackRegionSingleOrArray<State>;
+```
+
+| Parameter | Type                             | Description                                                                                                                        |
+| --------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| layerName | `string` or `number`             | The layer name to apply to the regions. Since `TrackRegion.layer` must be a string, a number passed here will be cast to a string. |
+| regions   | `TrackRegion` or `TrackRegion[]` | The region or regions to be copied with the new layer.                                                                             |
+
+- Returns: `TrackRegion` or `TrackRegion[]`, depending on whether one or more regions were apssed to the function.
+
+### layer -- Playground
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.layer(1, [
+    { start: 1000, duration: 1000, state: { x: { to: 10 } } },
+    { duration: 2000, state: { x: { to: 5 } }, loop: true }
+  ]);
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+## layerResolvers
+
+Contains layer resolver functions—currently, only [`overrideLast`](#layerresolversoverridelast)—to be used by `gen` to calculate an animation's frame state getter.
+
+```ts
+const layerResolvers = {
+  overrideLast: TrackLayerResolver
+};
+```
+
+Layer resolvers are used to calculate the composite value for a single animation state property that exists in multiple track layers at the same time.
+When such a case arises, information about the layers that contain the state property are given to the animation's track layer resolver, and the output of the resolver is used as the state property's value for that frame.
+
+See the [Layer Resolution guide](/docs/guides/layers#layer-resolution) or [`TrackLayerResolver` type definition](/docs/api/types#tracklayerresolver) for more information.
+
+### layerResolvers.overrideLast
+
+- Type: [`TrackLayerResolver`](/docs/api/types#tracklayerresolver)
+
+Selects the value candidate with the lowest age (least amount of time since it was last updated).
+
+If multiple candidates have the same age, the one with the highest layer rank will be used.
+Layer rank is calculated by alphanumerically sorting all layer names that exist in the track.
+
+## loop
+
+Places one or more regions into a group with the specified loop configuration.
+
+```ts
+const loop = <State extends object>(
+  regions: TrackRegionSingleOrArray<State>,
+  config: boolean | number | LoopConfig
+): TrackRegionGroup<State>
+```
+
+| Parameter | Type                                                                | Description                                                                                                                                                                                      |
+| --------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| regions   | `TrackRegion` or `TrackRegion[]`                                    | The region or regions to be placed into the looping group.                                                                                                                                       |
+| config    | `boolean` or `number` or [`LoopConfig`](/docs/api/types#loopconfig) | If a `number`, the region will be configured to loop that number of times. Otherwise, the config passed here will be the group's `loop` property. See the [Looping guide](/docs/guides/looping). |
+
+- Returns: [`TrackRegionGroup<State>`](/docs/api/types#trackregiongroup)
+
+### loop -- Playground
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.loop(
+    [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    5
+  );
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+## multi
+
+Flattens a collection of tracks into a single group's track, with the regions from each sub-track on separate layers.
+
+```ts
+const multi = <State extends object>(
+  tracks:
+    | TrackRegionSingleOrArray<State>[]
+    | Record<string, TrackRegionSingleOrArray<State>>,
+  config?: Omit<TrackRegionGroup<State>, "regions">
+): TrackRegionGroup<State>
+```
+
+| Parameter | Type                                                                                                                        | Description                                                                                                                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| track     | Either: An array of `TrackRegion` and `TrackRegion[]`, _or_ an object with each value as a `TrackRegion` or `TrackRegion[]` | The tracks to be flattened. If a 2D array is passed, each track's new layer will be its index in the 2D array. If an object is passed, the key referring to each track will be used as the layer. |
+| config    | `Omit<TrackRegionGroup<State>, "regions">`                                                                                  | Any region properties to be applied to the finished group, excluding `regions`. (Optional)                                                                                                        |
+
+- Returns: [`TrackRegionGroup<State>`](/docs/api/types#trackregiongroup)
+
+This function is useful for assembling groups with multiple concurrent layers.
+
+### multi -- Playground
+
+If the input track is a list of lists/single regions, each layer name will be the index of the input sub-track:
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.multi([
+    [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    { start: 2000, state: { y: { to: 0 } } }
+  ]);
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+If the input track is a object where every value is a list or single region, each layer name will be the key of that group:
+
+```jsx live startHidden
+() => {
+  const regions = TrackUtils.multi({
+    foo: [{ duration: 1000, state: { x: { to: 10 } } }, { duration: 2000 }],
+    bar: { start: 2000, state: { y: { to: 0 } } }
+  });
+  return (
+    <div>
+      <pre>Generated Region(s): {JSON.stringify(regions, null, 2)}</pre>
+    </div>
+  );
+};
+```

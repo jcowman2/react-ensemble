@@ -1,0 +1,120 @@
+```jsx live startHidden
+() => {
+  const { multi, loop } = TrackUtils;
+
+  const defaultState = {
+    y0: 100,
+    opacity0: 0,
+    y1: 100,
+    opacity1: 0,
+    y2: 100,
+    opacity2: 0,
+    y3: 100,
+    opacity3: 0
+  };
+
+  track = [
+    multi([
+      loop(
+        {
+          start: 250,
+          duration: 800,
+          state: {
+            y0: { to: 0 },
+            opacity0: { to: 1 }
+          }
+        },
+        { count: 0, boomerang: true }
+      ),
+      loop(
+        {
+          start: 500,
+          duration: 800,
+          state: {
+            y1: { to: 0 },
+            opacity1: { to: 1 }
+          }
+        },
+        { count: 0, boomerang: true }
+      ),
+      loop(
+        {
+          start: 750,
+          duration: 800,
+          state: {
+            y2: { to: 0 },
+            opacity2: { to: 1 }
+          }
+        },
+        { count: 0, boomerang: true }
+      ),
+      loop(
+        {
+          start: 1000,
+          duration: 800,
+          state: {
+            y3: { to: 0 },
+            opacity3: { to: 1 }
+          }
+        },
+        { count: 0, boomerang: true }
+      )
+    ])
+  ];
+
+  const [animState, setAnimState] = React.useState(defaultState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            defaultState={defaultState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+            endBehavior="loop"
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 150,
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-evenly",
+          alignItems: "center"
+        }}
+      >
+        {["__primary", "__secondary", "__tertiary", "__text"].map(
+          (color, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                paddingTop: 10
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  borderRadius: 15,
+                  width: 30,
+                  height: 30,
+                  backgroundColor: color,
+                  marginTop: animState[`y${index}`],
+                  opacity: animState[`opacity${index}`]
+                }}
+              />
+            </div>
+          )
+        )}
+      </div>
+    </>
+  );
+};
+```

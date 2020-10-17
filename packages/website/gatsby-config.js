@@ -19,7 +19,6 @@ module.exports = {
         backgroundColor: "transparent"
       }
     },
-
     {
       resolve: "gatsby-plugin-mdx",
       options: {
@@ -60,6 +59,14 @@ module.exports = {
         },
         google: {
           families: ["Open Sans:400,700"]
+        }
+      }
+    },
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: /src\/content/ // See below to configure properly
         }
       }
     }

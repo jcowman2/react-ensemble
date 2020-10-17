@@ -44,8 +44,12 @@ export const makeIntervalTreeFrameStateGetter = <State extends object>(
       for (const key in intervalState) {
         const lastChanged = interval.stateLastChanged[key];
         const isActive = interval.stateActive[key];
+        const justEnded = interval.end === current;
 
-        const age = isActive ? 0 : current - lastChanged;
+        let age = isActive ? 0 : current - lastChanged;
+        if (isActive && justEnded) {
+          age += 1;
+        }
 
         stateResolverData[key].push({
           name: layerName,

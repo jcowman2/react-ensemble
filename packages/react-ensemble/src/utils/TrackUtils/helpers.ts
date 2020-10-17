@@ -10,16 +10,6 @@ export const newId = (kind: string): string => {
   return `${kind}_${str.substr(2, 8)}`;
 };
 
-export const isInterpolatable = (
-  v: unknown
-): v is string | number | boolean => {
-  if (v === undefined) {
-    return false;
-  }
-  const vType = typeof v;
-  return vType === "string" || vType === "number" || vType === "boolean";
-};
-
 export const isFunction = (f: unknown): f is Function =>
   f && typeof f === "function";
 

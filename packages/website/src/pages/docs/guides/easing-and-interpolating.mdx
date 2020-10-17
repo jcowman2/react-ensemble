@@ -2,6 +2,96 @@
 title: Easing and Interpolating
 ---
 
+Easing and interpolating refer to two types of functions that React Ensemble uses to turn your track regions into fluid animations.
+
+React Ensemble relies on the awesome libraries [**d3-ease**](https://github.com/d3/d3-ease) and [**d3-interpolate**](https://github.com/d3/d3-interpolate) to perform these actions, but you can also extend the behavior with your own.
+
 ## Easing
 
+> "Easing is a method of distorting time to control apparent motion in animation." — d3
+
+Usually, we do not want time to be exactly linear in our animations.
+An element that slides in at a constant speed is much less exciting than one that bounces, springs, or boomerangs in.
+We can control this effect with an _easing function_.
+
+[**d3-ease**](https://github.com/d3/d3-ease) includes a number of interesting easing functions.
+For convenience, React Ensemble exports this package at `Lib.d3Ease`.
+
+```js
+import { Lib } from "react-ensemble";
+const { d3Ease } = Lib;
+```
+
+### Setting the Default Ease Function
+
+By default, every track region is animated with `d3Ease.easeCubic`. To change this setting, set the `easing` prop in your `Timeline`.
+
+import TrackLevelEasing from "../../../content/examples/track-level-easing.mdx";
+
+<TrackLevelEasing />
+
+### Region-Specific Easing
+
+You can override the ease function for a particular region by setting that region's `easing` field.
+
+If that region is a group, the new ease function you've specified will be the default for all of its child regions.
+
+### Writing Your Own Ease Function
+
+If [**d3-ease**](https://github.com/d3/d3-ease) doesn't have the ease function you need, you can write your own.
+
+An ease function must match the following type definition:
+
+```ts
+(progress: number) => number;
+```
+
+It's important to note that ease functions work with **normalized times**, which are a decimal between `[0,1]`.
+This number represents the percentage of the region that has elapsed.
+
+For example, normalized time at the start of a region is `0`, halfway through is `0.5`, and at the end is `1`.
+
 ## Interpolating
+
+Interpolation functions blend gradually between two values.
+In track regions with state properties, React Ensemble uses an interpolation function (or **interpolator**) to generate every intermediate value for that property during the region.
+
+For example, interpolating between the values `10` and `20` would return `10` at the beginning of the region, `15` halfway through, `17.5` three-quarters of the way through, and `20` at the end.
+
+[**d3-interpolate**](https://github.com/d3/d3-interpolate) contains a powerful interpolation function that can handle many types of values.
+For convenience, React Ensemble exports this package at `Lib.d3Interpolate`.
+
+```js
+import { Lib } from "react-ensemble";
+const { d3Interpolate } = Lib;
+```
+
+### Setting the Default Interpolation Function
+
+By default, every track region is interpolated with `d3Interpolate.interpolate`. To change this setting, set the `interp` prop in your `Timeline`.
+
+### Region-Specific Interpolation
+
+You can override the interpolator for a particular region by setting that region's `interp` field.
+
+If that region is a group, the new interpolator you've specified will be the default for all of its child regions.
+
+### Writing Your Own Interpolation Function
+
+`Lib.d3Interpolate` can handle many types of values, including number, strings, colors, arrays, and objects. If you need to write your own, however, your interpolator must match the following type definition:
+
+```ts
+<T>(start: T, end: T) => (progress: number) => T;
+```
+
+An interpolator takes `start` and `end` values and builds another function that will return some intermediate value when given a number between `[0,1]`.
+Most of the time, `progress=0` would return `start`, and `progress=1` would return `end`.
+
+The `<T>` syntax is just a generic type that means the `start`, `end`, and return value must all be the same type.
+
+## Further Reading
+
+- [d3-ease Docs](https://github.com/d3/d3-ease)
+- [d3-interpolate Docs](https://github.com/d3/d3-interpolate)
+- [Lib API](/docs/api/lib)
+- [TrackRegion API](/docs/api/types#trackregion)
