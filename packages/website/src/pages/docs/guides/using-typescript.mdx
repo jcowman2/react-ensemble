@@ -5,3 +5,53 @@ title: Using Typescript
 React Ensemble has first-class support for [TypeScript](https://www.typescriptlang.org/), a type-safe extension of JavaScript.
 
 This means that if you import React Ensemble components into TypeScript files, they will already have all the type definitions.
+If you use an IDE with a TypeScript server like [Visual Studio Code](https://code.visualstudio.com/), you may get type suggestions even if you're writing JavaScript.
+
+## Type Imports
+
+Most of the type definitions used in React Ensemble are publicly exported and are considered part of the [public API](/docs/api/types).
+
+You can import types just like other modules from React Ensemble:
+
+```ts
+import { Timeline, TrackRegion } from "react-ensemble";
+```
+
+## Animation State Type
+
+Throughout React Ensemble's type definitions, you may find references to `<State>`. For example, the `Controller` definition:
+
+```tsx
+const Controller: <State extends object = any>(
+  props: ControllerProps<State>
+) => JSX.Element | null;
+```
+
+`<State>` refers to your animation's custom state, which is the schema of state properties generated on every frame.
+You can define an interface for your animation's state to make your use of React Ensemble types even more explicit.
+
+```ts
+import { TrackRegion } from "react-ensemble";
+
+interface AnimState {
+  x: number;
+  y: number;
+}
+
+const track: TrackRegion<AnimState>[] = [
+  {
+    start: 1000,
+    state: {
+      x: { to: 10 },
+      y: { to: 10 }
+    }
+  },
+  {
+    start: 2000,
+    duration: 500,
+    state: {
+      y: { to: [10] } // Will throw type error! y must be a number.
+    }
+  }
+];
+```
