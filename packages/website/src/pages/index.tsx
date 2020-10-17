@@ -82,7 +82,7 @@ export default function Home() {
             </AnimationCard>
             <AnimationCard
               body={[
-                "React Ensemble isn’t restricted to a single rendering method—easily wire in Canvas, Konva, and more."
+                "React Ensemble isn’t restricted to a single rendering method. Use the same animation data to draw with HTML/CSS, SVGs, Canvas, and more."
               ]}
               title="Render Whatever"
               sx={{ mb: 4 }}
