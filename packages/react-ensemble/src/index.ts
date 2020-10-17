@@ -17,6 +17,21 @@ import {
 import SimpleControlPanel from "./components/SimpleControlPanel/SimpleControlPanel";
 
 import * as TrackUtils from "./utils/TrackUtils/trackUtils";
+import {
+  Animation,
+  CalculatedTrackRegion,
+  EasingFunction,
+  InterpolationFunction,
+  LoopConfig,
+  RegionState,
+  RegionStateProperty,
+  ResolverLayerData,
+  TrackConfig,
+  TrackLayerResolver,
+  TrackRegion,
+  TrackRegionAtom,
+  TrackRegionGroup
+} from "./utils/TrackUtils/trackUtils.types";
 
 /** Contains external packages that are used frequently in animations. */
 const Lib = {
@@ -44,8 +59,21 @@ export { Direction };
 // Types
 export type {
   TimelineProps,
+  ControlPanelProps,
   TickEvent,
-  UpdateEvent,
   LoadEvent,
-  ControlPanelProps
+  UpdateEvent,
+  Animation,
+  CalculatedTrackRegion,
+  EasingFunction,
+  InterpolationFunction,
+  LoopConfig,
+  RegionState,
+  RegionStateProperty,
+  ResolverLayerData,
+  TrackConfig,
+  TrackLayerResolver,
+  TrackRegion,
+  TrackRegionAtom,
+  TrackRegionGroup
 };
