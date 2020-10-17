@@ -2,6 +2,7 @@ import React from "react";
 /** @jsx jsx */
 import { jsx, Container, Heading, Flex } from "theme-ui";
 import { Link } from "gatsby";
+import ReactEnsembleLogo from "../content/images/react-ensemble-logo.svg";
 
 const StyledNavLink: React.FC<{
   label: string;
@@ -44,12 +45,19 @@ const StyledNavLink: React.FC<{
 const Nav: React.FC = () => {
   return (
     <Container>
-      <Flex sx={{ flexDirection: ["column", "row", "row"] }}>
-        <Container>
+      <Flex
+        sx={{ flexDirection: ["column", "row", "row"], alignItems: "center" }}
+      >
+        <Container sx={{ maxWidth: "250px", mb: [2, 0, 0] }}>
+          <a href="/">
+            <ReactEnsembleLogo />
+          </a>
+        </Container>
+        {/* <Container>
           <Heading as="h1">
             <StyledNavLink label="React Ensemble" linkTo="/" />
           </Heading>
-        </Container>
+        </Container> */}
         <Flex
           as="nav"
           sx={{
