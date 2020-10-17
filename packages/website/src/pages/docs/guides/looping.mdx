@@ -2,4 +2,80 @@
 title: Looping
 ---
 
+You can configure some or all of your animation to repeat multiple times.
+
+## Looping the Whole Track
+
+To make the whole animation loop, set `endBehavior="loop"` in your `Timeline`.
+
+## Boomerang
+
+Boomerang is a special kind of loop: after your animation or region finishes, it will play backwards to its starting position before looping again.
+
+To boomerang a whole animation, set `endBehavior="boomerang"` in your `Timeline`.
+
+## Looping Regions
+
+You can configure individual regions to loop or boomerang as well. Loop configuration is set via each track region's `loop` property.
+
+To make a region loop a certain number of times, set `loop.count`
+
+```js
+{
+  duration: 1000,
+  state: { x: { to: 5 } },
+  loop: {
+    count: 2 // Will play three times: once like normal, then loop twice
+  }
+}
+```
+
+To make a region loop until a certain time, set `loop.until`
+
+```js
+{
+  duration: 1000,
+  state: { x: { to: 5 } },
+  loop: {
+    until: 2000 // Will loop until 2000 (for 1 second total)
+  }
+}
+```
+
+To make a region loop for a certain amount of time, set `loop.duration`
+
+```js
+{
+  duration: 1000,
+  state: { x: { to: 5 } },
+  loop: {
+    duration: 2000 // Will for 2 seconds (playing 2 additional times)
+  }
+}
+```
+
+To make a region boomerang, set `loop.boomerang`. This property can be used in combination with any other loop config.
+
+```js
+{
+  duration: 1000,
+  state: { x: { to: 5 } },
+  loop: {
+    boomerang: true,
+    count: 2
+  }
+}
+```
+
 ## Passive Loops
+
+You may also set a track region's loop to `true`, rather than an object. If a track region's loop is `true` or `{ boomerang: true }`, then it is called a **passive loop**.
+
+Passive loops do not have a defined end time. Rather, they run until something else stops them...or forever, if nothing does.
+
+If there are any passive loops in a `Timeline` of which `endBehavior="continue"`, those passive loops will repeat indefinitely.
+
+## Further Reading
+
+- [LoopConfig API](/docs/api/types#loopconfig)
+- [TrackRegion API](/docs/api/types#trackregion)

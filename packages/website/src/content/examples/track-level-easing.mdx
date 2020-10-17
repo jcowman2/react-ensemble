@@ -1,0 +1,115 @@
+```jsx live startHidden
+() => {
+  const [easing, setEasing] = React.useState("easeElastic");
+
+  const defaultSpriteState = {
+    x: -100,
+    y: 50,
+    width: 35,
+    angle: 0,
+    color: "__primary"
+  };
+  const [spriteState, setSpriteState] = React.useState(defaultSpriteState);
+  const { x, y, width, angle, color } = spriteState;
+
+  const customEasing = React.useCallback(
+    progress => Math.abs(0.5 - progress) * 2,
+    []
+  );
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            endBehavior="loop"
+            defaultState={defaultSpriteState}
+            easing={easing === "custom" ? customEasing : Lib.d3Ease[easing]}
+            track={[
+              {
+                start: 0,
+                duration: 1500,
+                state: {
+                  y: { to: 200 },
+                  color: { to: "__tertiary" }
+                }
+              },
+              {
+                duration: 1500,
+                state: {
+                  x: { to: 100 },
+                  color: { to: "__secondary" }
+                }
+              },
+              {
+                duration: 1500,
+                state: {
+                  y: { to: 50 },
+                  color: { to: "__text" }
+                }
+              },
+              {
+                duration: 1500,
+                state: {
+                  x: { to: -100 },
+                  color: { to: "__primary" }
+                }
+              }
+            ]}
+            onUpdate={({ state }) => setSpriteState(state)}
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 250,
+          position: "relative",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            left: x,
+            top: y - width / 2,
+            width: width,
+            height: width,
+            transform: `rotate(${angle}deg)`,
+            backgroundColor: color
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end"
+          }}
+        >
+          <label htmlFor="easing" style={{ marginRight: 6 }}>
+            Easing Function:
+          </label>
+          <select
+            id="easing"
+            value={easing}
+            onChange={e => {
+              setEasing(e.target.value);
+            }}
+          >
+            <option value="easeElastic">Elastic</option>
+            <option value="easeCubic">Cubic (Default)</option>
+            <option value="easeLinear">Linear</option>
+            <option value="easeSin">Sinusoidal</option>
+            <option value="easeBack">Back/Anticipatory</option>
+            <option value="easeBounce">Bounce</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+      </div>
+    </>
+  );
+};
+```
