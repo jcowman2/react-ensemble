@@ -43,7 +43,7 @@ export default function Home() {
                 linkTo="/docs/"
                 sx={{ mr: [0, 3, 3], mb: [3, 0, 0] }}
               />
-              <LinkButton label="Browse Docs" linkTo="/docs/" invert />
+              <LinkButton label="Browse Docs" linkTo="/docs/guides" invert />
             </Flex>
           </Container>
         </Container>
