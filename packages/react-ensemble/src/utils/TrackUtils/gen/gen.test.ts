@@ -137,215 +137,299 @@ describe("TrackUtils.gen()", () => {
     y: 0
   };
 
-  test("result#layers places regions in the _default layer by default", () => {
-    const { layers } = gen(sampleTrack1, sampleDefaults1);
+  describe("general behavior", () => {
+    test("allows an empty track as input", () => {
+      const { getFrameState, length } = gen([], sampleDefaults1);
 
-    expect(Object.keys(layers)).toEqual(["_default"]);
-    expect(layers["_default"].length).toEqual(2); // account for end pad
-    expect(layers["_default"][0]).toEqual(
-      expect.objectContaining(sampleCalculatedTrack1)
-    );
-  });
-
-  test("result#getFrameState with one variable modified across two layers calculates the correct value", () => {
-    const { getFrameState } = gen(sampleMultiTrack1, sampleMultiDefaults1, {
-      easing: easeLinear
+      expect(length).toEqual(0);
+      expect(getFrameState(0)).toEqual(sampleDefaults1);
+      expect(getFrameState(100)).toEqual(sampleDefaults1);
     });
 
-    expect(getFrameState(0).x).toEqual(0);
-    expect(getFrameState(500).x).toEqual(100);
-    expect(getFrameState(800).x).toEqual(0);
-    expect(getFrameState(850).x).toEqual(200);
-    expect(getFrameState(900).x).toEqual(400);
-    expect(getFrameState(950).x).toEqual(190);
-    expect(getFrameState(1000).x).toEqual(200);
-  });
-
-  test("result#length is correct for a simple multilayer track", () => {
-    const { length } = gen(sampleMultiTrack1, sampleMultiDefaults1);
-    expect(length).toEqual(1000);
-  });
-
-  test("result#length is correct when endBehavior is continue", () => {
-    const { length } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "continue"
-    });
-    expect(length).toEqual(1500);
-  });
-
-  test("result#length is correct when endBehavior is stop", () => {
-    const { length } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "stop"
-    });
-    expect(length).toEqual(1500);
-  });
-
-  test("result#length is correct when endBehavior is loop", () => {
-    const { length } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "loop"
-    });
-    expect(length).toEqual(1500);
-  });
-
-  test("result#length is doubled when endBehavior is boomerang", () => {
-    const { length } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "boomerang"
-    });
-    expect(length).toEqual(3000);
-  });
-
-  test("result#getFrameState successfully boomerangs state values", () => {
-    const { getFrameState } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "boomerang",
-      easing: easeLinear
-    });
-
-    expect(getFrameState(0).y).toEqual(10);
-    expect(getFrameState(750).y).toEqual(105);
-    expect(getFrameState(1300).y).toBeCloseTo(174.666);
-    expect(getFrameState(1500).y).toEqual(200);
-    expect(getFrameState(1700).y).toBeCloseTo(174.666);
-    expect(getFrameState(2250).y).toEqual(105);
-    expect(getFrameState(3000).y).toEqual(10);
-  });
-
-  test("result#getFrameState successfully loops state values", () => {
-    const { getFrameState } = gen(sampleTrack1, sampleDefaults1, {
-      endBehavior: "loop",
-      easing: easeLinear
-    });
-
-    expect(getFrameState(0).y).toEqual(10);
-    expect(getFrameState(750).y).toEqual(105);
-    expect(getFrameState(1300).y).toBeCloseTo(174.666);
-    expect(getFrameState(1500).y).toEqual(10);
-    expect(getFrameState(1700).y).toBeCloseTo(35.333);
-    expect(getFrameState(2250).y).toEqual(105);
-    expect(getFrameState(3000).y).toEqual(10);
-  });
-
-  test("result#getFrameState resolves the correct values for a multi track with separate variables", () => {
-    const { getFrameState } = gen(sampleMultiTrack2, sampleMultiDefaults2, {
-      easing: easeLinear
-    });
-
-    expect(getFrameState(0)).toEqual({
-      x1: 0,
-      x2: 0,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(100)).toEqual({
-      x1: 10,
-      x2: 0,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(200)).toEqual({
-      x1: 20,
-      x2: 0,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(300)).toEqual({
-      x1: 30,
-      x2: 0,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(400)).toEqual({
-      x1: 40,
-      x2: 10,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(600)).toEqual({
-      x1: 60,
-      x2: 30,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(800)).toEqual({
-      x1: 80,
-      x2: 50,
-      x3: 0,
-      x4: 0
-    });
-    expect(getFrameState(1000)).toEqual({
-      x1: 100,
-      x2: 70,
-      x3: 20,
-      x4: 10
-    });
-    expect(getFrameState(1300)).toEqual({
-      x1: 100,
-      x2: 100,
-      x3: 50,
-      x4: 40
-    });
-    expect(getFrameState(1600)).toEqual({
-      x1: 100,
-      x2: 100,
-      x3: 80,
-      x4: 70
-    });
-    expect(getFrameState(1900)).toEqual({
-      x1: 100,
-      x2: 100,
-      x3: 100,
-      x4: 100
-    });
-    expect(getFrameState(2000)).toEqual({
-      x1: 100,
-      x2: 100,
-      x3: 100,
-      x4: 100
+    test("throws an error if an atom includes 'relativeTime'", () => {
+      expect(() => {
+        gen(
+          [
+            {
+              duration: 1000,
+              relativeTime: true
+            }
+          ],
+          { x: 0 }
+        );
+      }).toThrowError();
     });
   });
 
-  test("allows an empty track as input", () => {
-    const { getFrameState, length } = gen([], sampleDefaults1);
+  describe("end behaviors", () => {
+    test("result#length is correct when endBehavior is continue", () => {
+      const { length } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "continue"
+      });
+      expect(length).toEqual(1500);
+    });
 
-    expect(length).toEqual(0);
-    expect(getFrameState(0)).toEqual(sampleDefaults1);
-    expect(getFrameState(100)).toEqual(sampleDefaults1);
+    test("result#length is correct when endBehavior is stop", () => {
+      const { length } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "stop"
+      });
+      expect(length).toEqual(1500);
+    });
+
+    test("result#length is correct when endBehavior is loop", () => {
+      const { length } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "loop"
+      });
+      expect(length).toEqual(1500);
+    });
+
+    test("result#length is doubled when endBehavior is boomerang", () => {
+      const { length } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "boomerang"
+      });
+      expect(length).toEqual(3000);
+    });
+
+    test("result#getFrameState successfully boomerangs state values", () => {
+      const { getFrameState } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "boomerang",
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0).y).toEqual(10);
+      expect(getFrameState(750).y).toEqual(105);
+      expect(getFrameState(1300).y).toBeCloseTo(174.666);
+      expect(getFrameState(1500).y).toEqual(200);
+      expect(getFrameState(1700).y).toBeCloseTo(174.666);
+      expect(getFrameState(2250).y).toEqual(105);
+      expect(getFrameState(3000).y).toEqual(10);
+    });
+
+    test("result#getFrameState successfully loops state values", () => {
+      const { getFrameState } = gen(sampleTrack1, sampleDefaults1, {
+        endBehavior: "loop",
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0).y).toEqual(10);
+      expect(getFrameState(750).y).toEqual(105);
+      expect(getFrameState(1300).y).toBeCloseTo(174.666);
+      expect(getFrameState(1500).y).toEqual(10);
+      expect(getFrameState(1700).y).toBeCloseTo(35.333);
+      expect(getFrameState(2250).y).toEqual(105);
+      expect(getFrameState(3000).y).toEqual(10);
+    });
   });
 
-  test("result#getFrameState resolve the correct values for a simple boomerang track", () => {
-    const { getFrameState } = gen(
-      [{ layer: "1", duration: 1000, state: { x: { to: 10 } } }],
-      { x: 0 },
-      { endBehavior: "boomerang", easing: easeLinear }
-    );
-    expect(getFrameState(1000)).toEqual({ x: 10 });
-    expect(getFrameState(1250)).toEqual({ x: 7.5 });
+  describe("advanced interpolation", () => {
+    const arrayTrack: TrackRegion[] = [
+      {
+        duration: 1000,
+        state: {
+          arr: { to: [10, 20, 30] }
+        }
+      }
+    ];
+
+    const arrayDefaults = {
+      arr: [0, 10, 20]
+    };
+
+    test("result#getFrameState resolves the correct values for a simple array interpolation", () => {
+      const { getFrameState } = gen(arrayTrack, arrayDefaults, {
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0)).toEqual({ arr: [0, 10, 20] });
+      expect(getFrameState(500)).toEqual({ arr: [5, 15, 25] });
+    });
   });
 
-  test("result#getFrameState resolve the correct values for a boomerang track with an underlying layer", () => {
-    const { getFrameState } = gen(
-      [
-        { layer: "1", duration: 1000, state: { x: { to: 10 } } },
-        { layer: "0", duration: 1000, state: { x: { to: 0 } } }
-      ],
-      { x: 0 },
-      { endBehavior: "boomerang", easing: easeLinear }
-    );
-    expect(getFrameState(1000)).toEqual({ x: 10 });
-    expect(getFrameState(1250)).toEqual({ x: 7.5 });
+  describe("track regions", () => {
+    const setterTrack: TrackRegion[] = [
+      { duration: 1000 },
+      {
+        duration: 1000,
+        state: {
+          foo: { set: 10 }
+        }
+      }
+    ];
+
+    const setterDefault = {
+      foo: 0
+    };
+
+    test("result#getFrameState resolves the correct values for a region property setter", () => {
+      const { getFrameState } = gen(setterTrack, setterDefault, {
+        easing: easeLinear
+      });
+      expect(getFrameState(0)).toEqual({ foo: 0 });
+      expect(getFrameState(1000)).toEqual({ foo: 10 });
+      expect(getFrameState(2000)).toEqual({ foo: 10 });
+    });
+
+    const setterFnTrack: TrackRegion[] = [
+      { duration: 1000 },
+      {
+        duration: 1000,
+        state: {
+          foo: { set: (prev: number) => prev * 100 }
+        }
+      },
+      {
+        duration: 1000,
+        state: {
+          foo: { set: (prev: number) => prev * 100 }
+        }
+      }
+    ];
+
+    const setterFnDefault = {
+      foo: 10
+    };
+
+    test("result#getFrameState resolves the correct values for a region property setter function", () => {
+      const { getFrameState, layers } = gen(setterFnTrack, setterFnDefault, {
+        easing: easeLinear
+      });
+      expect(getFrameState(0)).toEqual({ foo: 10 });
+      expect(getFrameState(1000)).toEqual({ foo: 1000 });
+      expect(getFrameState(2000)).toEqual({ foo: 100000 });
+    });
   });
 
-  test("throws an error if an atom includes 'relativeTime'", () => {
-    expect(() => {
-      gen(
-        [
-          {
-            duration: 1000,
-            relativeTime: true
-          }
-        ],
-        { x: 0 }
+  describe("layers", () => {
+    test("result#layers places regions in the _default layer by default", () => {
+      const { layers } = gen(sampleTrack1, sampleDefaults1);
+
+      expect(Object.keys(layers)).toEqual(["_default"]);
+      expect(layers["_default"].length).toEqual(2); // account for end pad
+      expect(layers["_default"][0]).toEqual(
+        expect.objectContaining(sampleCalculatedTrack1)
       );
-    }).toThrowError();
+    });
+
+    test("result#getFrameState with one variable modified across two layers calculates the correct value", () => {
+      const { getFrameState } = gen(sampleMultiTrack1, sampleMultiDefaults1, {
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0).x).toEqual(0);
+      expect(getFrameState(500).x).toEqual(100);
+      expect(getFrameState(800).x).toEqual(0);
+      expect(getFrameState(850).x).toEqual(200);
+      expect(getFrameState(900).x).toEqual(400);
+      expect(getFrameState(950).x).toEqual(190);
+      expect(getFrameState(1000).x).toEqual(200);
+    });
+
+    test("result#length is correct for a simple multilayer track", () => {
+      const { length } = gen(sampleMultiTrack1, sampleMultiDefaults1);
+      expect(length).toEqual(1000);
+    });
+
+    test("result#getFrameState resolve the correct values for a simple boomerang track", () => {
+      const { getFrameState } = gen(
+        [{ layer: "1", duration: 1000, state: { x: { to: 10 } } }],
+        { x: 0 },
+        { endBehavior: "boomerang", easing: easeLinear }
+      );
+      expect(getFrameState(1000)).toEqual({ x: 10 });
+      expect(getFrameState(1250)).toEqual({ x: 7.5 });
+    });
+
+    test("result#getFrameState resolve the correct values for a boomerang track with an underlying layer", () => {
+      const { getFrameState } = gen(
+        [
+          { layer: "1", duration: 1000, state: { x: { to: 10 } } },
+          { layer: "0", duration: 1000, state: { x: { to: 0 } } }
+        ],
+        { x: 0 },
+        { endBehavior: "boomerang", easing: easeLinear }
+      );
+      expect(getFrameState(1000)).toEqual({ x: 10 });
+      expect(getFrameState(1250)).toEqual({ x: 7.5 });
+    });
+
+    test("result#getFrameState resolves the correct values for a multi track with separate variables", () => {
+      const { getFrameState } = gen(sampleMultiTrack2, sampleMultiDefaults2, {
+        easing: easeLinear
+      });
+
+      expect(getFrameState(0)).toEqual({
+        x1: 0,
+        x2: 0,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(100)).toEqual({
+        x1: 10,
+        x2: 0,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(200)).toEqual({
+        x1: 20,
+        x2: 0,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(300)).toEqual({
+        x1: 30,
+        x2: 0,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(400)).toEqual({
+        x1: 40,
+        x2: 10,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(600)).toEqual({
+        x1: 60,
+        x2: 30,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(800)).toEqual({
+        x1: 80,
+        x2: 50,
+        x3: 0,
+        x4: 0
+      });
+      expect(getFrameState(1000)).toEqual({
+        x1: 100,
+        x2: 70,
+        x3: 20,
+        x4: 10
+      });
+      expect(getFrameState(1300)).toEqual({
+        x1: 100,
+        x2: 100,
+        x3: 50,
+        x4: 40
+      });
+      expect(getFrameState(1600)).toEqual({
+        x1: 100,
+        x2: 100,
+        x3: 80,
+        x4: 70
+      });
+      expect(getFrameState(1900)).toEqual({
+        x1: 100,
+        x2: 100,
+        x3: 100,
+        x4: 100
+      });
+      expect(getFrameState(2000)).toEqual({
+        x1: 100,
+        x2: 100,
+        x3: 100,
+        x4: 100
+      });
+    });
   });
 
   describe("Looping", () => {
