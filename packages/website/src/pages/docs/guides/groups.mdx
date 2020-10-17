@@ -1,3 +1,106 @@
 ---
 title: Groups
 ---
+
+Groups are a special kind of track region that are just a container for other regions.
+
+Create a group by setting a region's `regions` property:
+
+```js
+const myGroup = {
+  start: 1000,
+  loop: true,
+  regions: [
+    { duration: 1000, state: { x: { to: 5 } } },
+    { duration: 2000, state: { x: { to: 0 } } }
+  ]
+};
+```
+
+As you can see in the example, groups can have many of the same properties singular (or **atom**) track regions can have.
+Specifically, track region groups share these properties with track region atoms:
+
+- `start`
+- `end`
+- `easing`
+- `interp`
+- `layer`
+- `loop`
+
+A group may not have these properties, however:
+
+- `state`
+- `duration`
+
+## Inheriting Properties
+
+If `easing` or `interp` is set on a group, then that function will become the default `easing` or `interp` for every child of the group.
+Just like normal, child regions may override their default easing and interpolation functions.
+
+## Layer Namespaces
+
+When animations are generated, React Ensemble treats groups essentially like self-contained animations.
+Therefore, layers are handled a bit differently than they are in a single-dimensional track.
+
+Child regions' layers are **namespaced** by their parent's layer name according to this pattern: `"parent-layer-name.layer-name"`.
+
+```js
+const track = [
+  {
+    layer: "top",
+    regions: [
+      { layer: "child", duration: 0 } // Will have layer = "top.child"
+    ]
+  }
+];
+```
+
+For example, a region with the layer `"foo"` in a group will not be in the same layer as `"foo"` at the top level.
+
+## Relative Time
+
+Groups have an optional property `relativeTime` that sets whether or not child regions' timestamps will be considered relative to the group's start time.
+
+Consider the following group:
+
+```js
+const myGroup = {
+  start: 1000,
+  regions: [
+    { start: 2000, state: { x: { to: 5 } } },
+    { duration: 1000, state: { x: { to: 0 } }, loop: { until: 5000 } }
+  ]
+};
+```
+
+There are two ways to interpret the `start` and `loop.until` properties of the group's children.
+
+First, we can consider these times **absolute**. Every timestamp in a group with absolute timing is considered relative to the start of the _animation_.
+
+```js
+const myGroup = {
+  start: 1000,
+  relativeTime: false, // This is false by default, so including it is not needed
+  regions: [
+    { start: 2000, state: { x: { to: 5 } } }, // Start at 2 seconds (1 second after the group starts)
+    { duration: 1000, state: { x: { to: 0 } }, loop: { until: 5000 } } // Loop until 5 seconds (4 seconds after the group starts)
+  ]
+};
+```
+
+Alternatively, we can consider these times **relative** to the start of the _group_.
+
+```js
+const myGroup = {
+  start: 1000,
+  relativeTime: true,
+  regions: [
+    { start: 2000, state: { x: { to: 5 } } }, // Start at 3 seconds (2 seconds after the group starts)
+    { duration: 1000, state: { x: { to: 0 } }, loop: { until: 5000 } } // Loop until 6 seconds (5 seconds after the group starts)
+  ]
+};
+```
+
+## Further Reading
+
+- [TrackRegionGroup API](/docs/api/types#trackregiongroup)
