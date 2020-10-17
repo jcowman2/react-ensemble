@@ -18,6 +18,6 @@ Bug reports, questions, suggestions, and pull requests are always welcome!
 
 ## License
 
-React Ensemble is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
+React Ensemble is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). 
 
 _Copyright © 2020 Joseph Cowman_
