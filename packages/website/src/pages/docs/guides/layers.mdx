@@ -130,18 +130,18 @@ This animation has two layers: 1 and 2. If `x` has a default value of `0`, the f
 Since we have two layers, there are two possible `x` values we could draw at any frame of the animation.
 Let's consider some possible ways to resolve this.
 
-**First Option: Prioritize the first track**
+**First Option: Prioritize the first layer**
 
-With this resolver, we always choose the `x` value from the first track. Our animation would look like this:
+With this resolver, we always choose the `x` value from the first layer. Our animation would look like this:
 
 - At time = 0, `x` is changed from `0` to `123`
 - `x` remains `123` for the rest of the animation
 
 The information from layer 2 is lost. This probably isn't the best option.
 
-**Second Option: Prioritize the last track**
+**Second Option: Prioritize the last layer**
 
-If we always choose the `x` from the last track instead, our animation would look like this:
+If we always choose the `x` from the last layer instead, our animation would look like this:
 
 - `x` is `0` until time = 500
 - At time = 500, `x` is changed from `0` to `99`

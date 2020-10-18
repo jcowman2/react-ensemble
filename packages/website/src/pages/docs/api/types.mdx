@@ -304,19 +304,19 @@ Wherever track regions are expected, there can be any assortment of these two re
 Although `TrackRegionAtom` and `TrackRegionGroup` have some unique properties, they have many in common.
 The properties shared across all types of track regions include:
 
-| Property | Type                                              | Description                                                                                                                                                               |
-| -------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| start    | `number`                                          | The region's starting point, in milliseconds. (Optional)                                                                                                                  |
-| end      | `number`                                          | The region's ending point, in milliseconds. (Optional)                                                                                                                    |
-| easing   | [`EasingFunction`](#easingfunction)               | The region's easing function, which will override the `TrackConfig` easing function. (Optional)                                                                           |
-| interp   | [`InterpolationFunction`](#interpolationfunction) | The region's interpolation function, which will override the `TrackConfig` interpolation function. (Optional)                                                             |
-| layer    | `string`                                          | The region's layer name.                                                                                                                                                  |
-| loop     | `LoopConfig` or `boolean`                         | Determines if and how the region should loop within the animation. If true, will be a passive loop. If an object, will be parsed according to [`LoopConfig`](#loopconfig) |
+| Property | Type                                              | Description                                                                                                                                                                          |
+| -------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| start    | `number`                                          | The region's starting point, in milliseconds. (Optional)                                                                                                                             |
+| end      | `number`                                          | The region's ending point, in milliseconds. (Optional)                                                                                                                               |
+| easing   | [`EasingFunction`](#easingfunction)               | The region's easing function, which will override the `TrackConfig` easing function. (Optional)                                                                                      |
+| interp   | [`InterpolationFunction`](#interpolationfunction) | The region's interpolation function, which will override the `TrackConfig` interpolation function. (Optional)                                                                        |
+| layer    | `string`                                          | The region's layer name. (Optional)                                                                                                                                                  |
+| loop     | `LoopConfig` or `boolean`                         | Determines if and how the region should loop within the animation. (Optional) If true, will be a passive loop. If an object, will be parsed according to [`LoopConfig`](#loopconfig) |
 
 If used for an animation parsed by `TrackUtils.gen`, the following rules apply:
 
-- `start` must be later than or equal to the end of the region before it in the same layer.
-- `end` must be later than or equal to `start`.
+- If defined, `start` must be later than or equal to the end of the region before it in the same layer.
+- If defined, `end` must be later than or equal to `start`.
 - If `loop` is defined, `end` must not be defined.
 
 ## TrackRegionAtom
