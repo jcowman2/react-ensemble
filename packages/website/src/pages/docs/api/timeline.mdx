@@ -134,7 +134,7 @@ Setting `avoidReload` to `false` can be helpful if you want an animation to chan
 **Disabling this prop can have negative performance effects** for your animation if `track` or `defaultState` are redefined on every render of your parent component.
 Be sure to define `track` and `defaultState` outside your render function or properly memoize them.
 
-```js
+```jsx
 // Instead of this:
 () => {
   return (
