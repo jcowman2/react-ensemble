@@ -39,6 +39,7 @@ interface TimelineProps<State extends object = any> {
   playbackSpeed?: number;
   interval?: number;
   endBehavior?: TimelineEndBehavior;
+  avoidReload?: boolean;
   easing?: EasingFunction;
   interp?: InterpolationFunction;
   resolver?: TrackLayerResolver<State>;
@@ -57,7 +58,7 @@ interface TimelineProps<State extends object = any> {
 The array of regions that make up the animation.
 
 `track` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
-After `Timeline` initializes, it will not re-calculate the animation if `track` changes.
+After `Timeline` initializes, it will not re-calculate the animation if `track` changes when `avoidReload = true`.
 
 ### defaultState
 
@@ -67,7 +68,7 @@ After `Timeline` initializes, it will not re-calculate the animation if `track` 
 The animation's default state. Must be an object.
 
 `defaultState` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
-After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes.
+After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes when `avoidReload = true`.
 
 ### value
 
@@ -116,6 +117,51 @@ There are unavoidable (but minor) delays caused by querying the animation object
 - Default: `"stop"`
 
 Describes how the engine will calculate frame states for time values greater than the length of the animation.
+
+### avoidReload
+
+- Type: `boolean`
+- Default: `true`
+- _Since: v1.1.0_
+
+Whether or not `Timeline` will rebuild the animation when references to `track` or `defaultState` change.
+
+This property is `true` by default, meaning the animation will rebuild only when `endBehavior`, `easing`, `interp`, or `resolver` change.
+Changing `track` or `defaultState` will have no effect post-initialization.
+
+Setting `avoidReload` to `false` can be helpful if you want an animation to change dynamically after the `Timeline` has already initialized.
+
+**Disabling this prop can have negative performance effects** for your animation if `track` or `defaultState` are redefined on every render of your parent component.
+Be sure to define `track` and `defaultState` outside your render function or properly memoize them.
+
+```js
+// Instead of this:
+() => {
+  return (
+    <Timeline
+      avoidReload={false}
+      track={[{ duration: 1000 /* etc */ }]}
+      defaultState={{ x: 0 }}
+      {...props}
+    />
+  );
+};
+
+// Do this:
+() => {
+  const track = React.useMemo(() => [{ duration: 1000 /* etc */ }], []);
+  const defaultState = React.useMemo(() => ({ x: 0 }), []);
+
+  return (
+    <Timeline
+      avoidReload={false}
+      track={track}
+      defaultState={defaultState}
+      {...props}
+    />
+  );
+};
+```
 
 ### easing
 
@@ -199,3 +245,8 @@ See [`LoadEvent`](/docs/api/types#loadevent).
 - `easing`
 - `interp`
 - `resolver`
+
+If `avoidReload = false`, `Timeline` will also initialize whenever these props change:
+
+- `track`
+- `defaultState`
