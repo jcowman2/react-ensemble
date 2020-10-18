@@ -13,6 +13,7 @@ import { gen } from "../../utils/TrackUtils/trackUtils";
 export const TIMELINE_DEFAULTS = {
   intervalLength: 10,
   playbackSpeed: 1,
+  avoidReload: true,
   onTick: () => {},
   onUpdate: () => {},
   onEnded: () => {},
@@ -28,7 +29,7 @@ export interface TimelineProps<State extends object = any> {
    * The array of regions that make up the animation.
    *
    * `track` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
-   * After `Timeline` initializes, it will not re-calculate the animation if `track` changes.
+   * After `Timeline` initializes, it will not re-calculate the animation if `track` changes  when `avoidReload = true`.
    */
   track: TrackRegion<State>[];
 
@@ -36,7 +37,7 @@ export interface TimelineProps<State extends object = any> {
    * The animation's default state. Must be an object.
    *
    * `defaultState` is passed into `TrackUtils.gen()` immediately after `Timeline` mounts, calculating the `Animation`.
-   * After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes.
+   * After `Timeline` initializes, it will not re-calculate the animation if `defaultState` changes  when `avoidReload = true`.
    */
   defaultState: State;
 
@@ -83,6 +84,15 @@ export interface TimelineProps<State extends object = any> {
    * @default "stop"
    */
   endBehavior?: TimelineEndBehavior;
+
+  /**
+   * Whether or not `Timeline` will rebuild the animation when references to `track` or `defaultState` change.
+   *
+   * **Disabling this prop can have negative performance effects** for your animation if `track` or `defaultState` are redefined on every render of your parent component.
+   * Be sure to define `track` and `defaultState` outside your render function or properly memoize them.
+   * @default true
+   */
+  avoidReload?: boolean;
 
   /**
    * Sets the animation's default easing function.
@@ -151,6 +161,7 @@ const Timeline = <State extends object = any>(
     playbackSpeed = TIMELINE_DEFAULTS.playbackSpeed,
     interval: intervalLength = TIMELINE_DEFAULTS.intervalLength,
     endBehavior: endBehaviorProp,
+    avoidReload = TIMELINE_DEFAULTS.avoidReload,
     easing,
     interp,
     resolver,
@@ -196,6 +207,14 @@ const Timeline = <State extends object = any>(
   React.useEffect(() => {
     setHasInit(false);
   }, [endBehaviorProp, easing, interp, resolver]);
+
+  /** May or may not reload when track/defaultState change depending on avoidReload */
+  React.useEffect(() => {
+    if (avoidReload) {
+      return;
+    }
+    setHasInit(false);
+  }, [avoidReload, track, defaultState]);
 
   /** Set interval */
   React.useEffect(() => {

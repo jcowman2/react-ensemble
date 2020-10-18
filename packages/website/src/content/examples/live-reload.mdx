@@ -1,0 +1,92 @@
+```jsx live startHidden
+() => {
+  const getRandomX = React.useCallback(() => Math.random() * 500 - 250, []);
+  const getRandomY = React.useCallback(() => Math.random() * 150 + 50, []);
+
+  const getRandomDefaultState = React.useCallback(
+    () => ({
+      x: getRandomX(),
+      y: getRandomY()
+    }),
+    []
+  );
+
+  const getRandomTrack = React.useCallback(
+    () => [
+      {
+        duration: 1500,
+        state: {
+          x: { to: getRandomX() },
+          y: { to: getRandomY() }
+        }
+      }
+    ],
+    []
+  );
+
+  const [defaultState, setDefaultState] = React.useState(() =>
+    getRandomDefaultState()
+  );
+  const [track, setTrack] = React.useState(() => getRandomTrack());
+  const [animState, setAnimState] = React.useState(defaultState);
+
+  return (
+    <>
+      <Controller>
+        {props => (
+          <Timeline
+            {...props}
+            avoidReload={false}
+            defaultState={defaultState}
+            track={track}
+            onUpdate={({ state }) => setAnimState(state)}
+            endBehavior="boomerang"
+          />
+        )}
+      </Controller>
+      <div
+        style={{
+          height: 250,
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            borderRadius: 15,
+            width: 30,
+            height: 30,
+            backgroundColor: "__primary",
+            left: animState.x,
+            top: animState.y - 15
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end"
+          }}
+        >
+          <div>
+            ({Math.floor(defaultState.x)}, {Math.floor(defaultState.y)}) to (
+            {Math.floor(track[0].state.x.to)}, {Math.floor(track[0].state.y.to)})
+            <button
+              onClick={() => {
+                setDefaultState(getRandomDefaultState());
+                setTrack(getRandomTrack());
+              }}
+            >
+              Randomize
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+```
